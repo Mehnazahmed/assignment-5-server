@@ -62,9 +62,9 @@ userSchema.post("save", function (doc, next) {
   next();
 });
 
-userSchema.statics.isUserExistsByCustomId = async function (id: string) {
-  return await User.findOne({ id }).select("+password");
-};
+// userSchema.statics.isUserExistsByCustomId = async function (id: string) {
+//   return await User.findOne({ id }).select("+password");
+// };
 
 // userSchema.statics.isPasswordMatched = async function (
 //   plainTextPassword,
