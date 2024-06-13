@@ -1,5 +1,7 @@
 import { Schema, model } from "mongoose";
 import { TUser } from "./user.interface";
+import config from "../../config";
+import bcrypt from "bcrypt";
 
 const userSchema = new Schema<TUser>(
   {
@@ -41,5 +43,34 @@ const userSchema = new Schema<TUser>(
     timestamps: true,
   }
 );
+// Pre-save middleware to hash the password
+userSchema.pre("save", async function (next) {
+  const user = this;
+  if (user.isModified("password")) {
+    // Only hash the password if it has been modified (or is new)
+    user.password = await bcrypt.hash(
+      user.password,
+      Number(config.bcrypt_salt_rounds)
+    );
+  }
+  next();
+});
+
+//post save middleware
+userSchema.post("save", function (doc, next) {
+  doc.password = "";
+  next();
+});
+
+userSchema.statics.isUserExistsByCustomId = async function (id: string) {
+  return await User.findOne({ id }).select("+password");
+};
+
+// userSchema.statics.isPasswordMatched = async function (
+//   plainTextPassword,
+//   hashedPassword
+// ) {
+//   return await bcrypt.compare(plainTextPassword, hashedPassword);
+// };
 
 export const User = model<TUser>("User", userSchema);
