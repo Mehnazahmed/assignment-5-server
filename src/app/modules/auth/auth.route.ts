@@ -7,9 +7,9 @@ const router = Router();
 
 router.post(
   "/signup",
-  //   validateRequest(UserValidation.userValidationSchema),
+  validateRequest(UserValidation.userValidationSchema),
   authControllers.usersignUp
 );
-router.post("/login");
+router.post("/login", authControllers.loginUser);
 
 export const AuthRoutes = router;

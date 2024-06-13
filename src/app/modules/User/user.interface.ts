@@ -1,6 +1,7 @@
 import { Model } from "mongoose";
 
 export interface TUser {
+  _id?: string;
   name: string;
   email: string;
   password: string;
@@ -9,10 +10,11 @@ export interface TUser {
   address: string;
 }
 
-// export interface UserModel extends Model<TUser> {
-//   isUserExistsByCustomId(id: string): Promise<TUser>;
-//   isPasswordMatched(
-//     plainTextPassword: string,
-//     hashedPassword: string
-//   ): Promise<boolean>;
-// }
+export interface UserModel extends Model<TUser> {
+  isUserExistsByEmail(email: string): Promise<TUser>;
+
+  isPasswordMatched(
+    plainTextPassword: string,
+    hashedPassword: string
+  ): Promise<boolean>;
+}
