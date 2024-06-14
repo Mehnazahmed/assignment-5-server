@@ -1,30 +1,42 @@
-import { Request, Response, NextFunction } from "express";
-import jwt, { JwtPayload } from "jsonwebtoken";
-
+import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
-import AppError from "../errors/AppError";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "../config";
+import AppError from "../errors/AppError";
 import { TUserRole } from "../modules/user/user.interface";
+import { User } from "../modules/user/user.model";
+import catchAsync from "../utils/catchAsync";
 
 const auth = (...requiredRoles: TUserRole[]) => {
-  return async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const authHeader = req.headers.authorization;
+  return catchAsync(
+    async (
+      req: Request & { user?: any },
+      res: Response,
+      next: NextFunction
+    ) => {
+      const token = req.headers.authorization;
 
-      if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        throw new AppError(
-          httpStatus.UNAUTHORIZED,
-          "Authentication token is missing"
-        );
+      // checking if the token is missing
+      if (!token) {
+        throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized!");
       }
 
-      const token = authHeader.split(" ")[1];
+      // checking if the given token is valid
       const decoded = jwt.verify(
         token,
         config.jwt_access_secret as string
       ) as JwtPayload;
 
-      const { role, userId } = decoded;
+      const { role, userEmail } = decoded;
+      console.log("decoded", decoded);
+      // checking if the user is exist
+      const user = await User.isUserExistsByEmail(userEmail);
+
+      //   console.log("user", user);
+
+      if (!user) {
+        throw new AppError(httpStatus.NOT_FOUND, "This user is not found !");
+      }
 
       if (requiredRoles && !requiredRoles.includes(role)) {
         throw new AppError(
@@ -33,14 +45,10 @@ const auth = (...requiredRoles: TUserRole[]) => {
         );
       }
 
-      req.user = decoded;
+      req.user = decoded as JwtPayload;
       next();
-    } catch (error) {
-      next(
-        new AppError(httpStatus.UNAUTHORIZED, "Invalid authentication token")
-      );
     }
-  };
+  );
 };
 
 export default auth;

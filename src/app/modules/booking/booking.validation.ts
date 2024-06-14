@@ -11,7 +11,7 @@ const bookingSchema = z.object({
       .string()
       .regex(/^\d{2}:\d{2}$/, "End time must be in HH:MM:SS format"), // Time format validation
 
-    // user: z.string().uuid(),
+    user: z.string().uuid(),
     facility: z.string().uuid(),
     payableAmount: z.number(),
 

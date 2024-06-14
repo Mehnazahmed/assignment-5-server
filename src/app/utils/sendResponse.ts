@@ -5,6 +5,7 @@ type TResponse<T> = {
   message?: string;
   data: T;
   token?: string;
+  user?: string;
 };
 const sendResponse = <T>(res: Response, data: TResponse<T>) => {
   res.status(data?.statusCode).json({
@@ -14,6 +15,7 @@ const sendResponse = <T>(res: Response, data: TResponse<T>) => {
     message: data.message,
     data: data.data,
     token: data.token,
+    user: data.token,
   });
 };
 

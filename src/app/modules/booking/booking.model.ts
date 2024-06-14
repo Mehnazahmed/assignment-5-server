@@ -15,14 +15,14 @@ const bookingSchema = new Schema<TBooking>({
     type: String,
     required: true,
   },
-  // user: {
-  //   type: Schema.Types.ObjectId,
-  //   ref: "User", // Reference to the User model
-  //   required: true,
-  // },
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: "user", // Reference to the User model,
+    // required: true,
+  },
   facility: {
     type: Schema.Types.ObjectId,
-    ref: "Facility", // Reference to the Facility model
+    ref: "facility", // Reference to the Facility model
     required: true,
   },
   payableAmount: {

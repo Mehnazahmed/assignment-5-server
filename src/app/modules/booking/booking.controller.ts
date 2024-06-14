@@ -2,71 +2,100 @@ import { Request, Response, NextFunction } from "express";
 import httpStatus from "http-status";
 import sendResponse from "../../utils/sendResponse";
 import { bookingServices } from "./booking.service";
-import { TBooking } from "./booking.interface";
+import { TBooking, TBookingData } from "./booking.interface";
 import { Booking } from "./booking.model";
 import AppError from "../../errors/AppError";
+import catchAsync from "../../utils/catchAsync";
+import { User } from "../user/user.model";
 
-const createBooking = async (
+const createBooking = catchAsync(
+  async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
+    try {
+      const user = req.user;
+      const email = user.userEmail;
+      console.log(user);
+
+      const userData = await User.isUserExistsByEmail(email);
+      // console.log(userData);
+      const userId = userData._id;
+
+      if (!user) {
+        throw new AppError(
+          httpStatus.UNAUTHORIZED,
+          "User authentication failed"
+        );
+      }
+
+      const { facility, date, startTime, endTime } = req.body;
+
+      const bookingData: TBooking = {
+        facility,
+        date: new Date(date),
+        startTime,
+        endTime,
+        user: user._id,
+        payableAmount: 0,
+        isBooked: "confirmed",
+      };
+
+      const newBooking = await bookingServices.createBookingIntoDB(bookingData);
+
+      // Send a successful response
+      sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+
+        message: "Booking created successfully",
+        data: { newBooking, user: userId },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+//get all bookings
+
+const getAllBookings = catchAsync(async (req, res) => {
+  const result = await bookingServices.getAllBookingsFromDB();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Bookings retrieved successfully",
+    data: result,
+  });
+});
+
+const deleteBooking = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await bookingServices.deleteBookingFromDB(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Booking cancelled successfully",
+    data: result,
+  });
+});
+
+const checkAvailability = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const { facility, date, startTime, endTime } = req.body;
-
-    // Ensure date is a Date object
-    const bookingDate = new Date(date);
-
-    // Ensure startTime and endTime are in HH:MM:SS format
-    const formattedStartTime = `${startTime}:00`;
-    const formattedEndTime = `${endTime}:00`;
-
-    // Check if the facility is available during the requested time slot
-    const existingBooking = await Booking.findOne({
-      facility,
-      date: bookingDate,
-      $or: [
-        { startTime: { $lt: formattedEndTime, $gte: formattedStartTime } },
-        { endTime: { $gt: formattedStartTime, $lte: formattedEndTime } },
-      ],
-    });
-
-    if (existingBooking) {
-      throw new AppError(
-        httpStatus.CONFLICT,
-        "Facility is unavailable during the requested time slot"
-      );
-    }
-
-    // Get the user ID from the authenticated user's token
-    // const user = req.user?._id;
-
-    // if (!user) {
-    //   throw new AppError(
-    //     httpStatus.UNAUTHORIZED,
-    //     "User authentication failed or user not found"
-    //   );
-    // }
-
-    // Create the booking
-    const bookingData: TBooking = {
-      facility,
-      date: bookingDate,
-      startTime: formattedStartTime,
-      endTime: formattedEndTime,
-      // user,
-      payableAmount: 0, // This will be calculated in the pre-save hook
-      isBooked: "confirmed",
-    };
-
-    const newBooking = await bookingServices.createBookingIntoDB(bookingData);
+    const { date } = req.query;
+    const availableSlots = await bookingServices.checkAvailabilityFromDb(
+      date as string
+    );
 
     // Send the response
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: "Booking created successfully",
-      data: newBooking,
+      message: "Availability checked successfully",
+      data: availableSlots,
     });
   } catch (error) {
     next(error);
@@ -75,4 +104,7 @@ const createBooking = async (
 
 export const bookingControllers = {
   createBooking,
+  getAllBookings,
+  deleteBooking,
+  checkAvailability,
 };
