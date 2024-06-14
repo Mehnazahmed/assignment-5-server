@@ -1,12 +1,8 @@
-import { NextFunction } from "express";
-
-import { model } from "mongoose";
+import mongoose, { Schema, model, Types, Document } from "mongoose";
 import { TBooking } from "./booking.interface";
+import { calculatePayableAmount } from "./booking.utils";
 
-const mongoose = require("mongoose");
-const { Schema, Types } = mongoose;
-
-const bookingSchema = new Schema({
+const bookingSchema = new Schema<TBooking>({
   date: {
     type: Date,
     required: true,
@@ -19,13 +15,13 @@ const bookingSchema = new Schema({
     type: String,
     required: true,
   },
-  user: {
-    type: Types.ObjectId,
-    ref: "User", // Reference to the User model
-    required: true,
-  },
+  // user: {
+  //   type: Schema.Types.ObjectId,
+  //   ref: "User", // Reference to the User model
+  //   required: true,
+  // },
   facility: {
-    type: Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "Facility", // Reference to the Facility model
     required: true,
   },
@@ -39,16 +35,25 @@ const bookingSchema = new Schema({
     enum: ["confirmed", "unconfirmed", "canceled"],
   },
 });
+
 // Pre-save hook to calculate payable amount before saving the booking
-bookingSchema.pre("save", async function (this: TBooking, next: NextFunction) {
-  const booking = this as TBooking;
+bookingSchema.pre("save", async function (this: TBooking & Document, next) {
+  const booking = this as TBooking & Document;
   const facility = await model("Facility").findById(booking.facility);
   if (!facility) {
     throw new Error("Facility not found for this booking.");
   }
+
+  const startTime = new Date(
+    `${booking.date.toISOString().split("T")[0]}T${booking.startTime}`
+  );
+  const endTime = new Date(
+    `${booking.date.toISOString().split("T")[0]}T${booking.endTime}`
+  );
+
   booking.payableAmount = calculatePayableAmount(
-    new Date(booking.startTime),
-    new Date(booking.endTime),
+    startTime,
+    endTime,
     facility.pricePerHour
   );
   next();

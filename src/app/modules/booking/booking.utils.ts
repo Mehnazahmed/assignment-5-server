@@ -1,4 +1,4 @@
-function calculatePayableAmount(
+export function calculatePayableAmount(
   startTime: Date,
   endTime: Date,
   pricePerHour: number
