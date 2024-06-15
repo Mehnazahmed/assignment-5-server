@@ -24,9 +24,11 @@ const deleteBookingFromDB = async (id: string) => {
   return result;
 };
 
-const getBookingsByUser = async (id: string) => {
-  const result = await Booking.findById(id).populate("Facility");
-  return result;
+const getBookingsByUser = async (userEmail: string) => {
+  const userBookings = await Booking.find({ user: userEmail }).populate(
+    "facility"
+  );
+  return userBookings;
 };
 
 const checkAvailabilityFromDb = async (date: string) => {

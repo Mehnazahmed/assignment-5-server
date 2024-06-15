@@ -15,7 +15,7 @@ const sendResponse = <T>(res: Response, data: TResponse<T>) => {
     message: data.message,
     data: data.data,
     token: data.token,
-    user: data.token,
+    // user: data.token,
   });
 };
 

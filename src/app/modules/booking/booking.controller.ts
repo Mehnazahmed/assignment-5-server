@@ -61,28 +61,37 @@ const createBooking = catchAsync(
 //get all bookings
 
 const getAllBookings = catchAsync(async (req, res) => {
-  const result = await bookingServices.getAllBookingsFromDB();
+  try {
+    const result = await bookingServices.getAllBookingsFromDB();
 
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "Bookings retrieved successfully",
-    data: result,
-  });
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Bookings retrieved successfully",
+      data: result,
+    });
+  } catch (error) {
+    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "api is not valid");
+  }
 });
 
-const getBookingsByUser = catchAsync(async (req, res) => {
-  const { id } = req.params;
-  const user = id;
-  const result = await bookingServices.getBookingsByUser(user);
+const getUserBookings = catchAsync(
+  async (req: Request & { user?: any }, res: Response) => {
+    const { userEmail } = req.user;
 
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "Course is retrieved succesfully",
-    data: result,
-  });
-});
+    console.log(req.user);
+    console.log(userEmail);
+
+    const bookings = await bookingServices.getBookingsByUser(userEmail);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Bookings retrieved successfully",
+      data: bookings,
+    });
+  }
+);
 
 const deleteBooking = catchAsync(async (req, res) => {
   const { id } = req.params;
@@ -124,5 +133,5 @@ export const bookingControllers = {
   getAllBookings,
   deleteBooking,
   checkAvailability,
-  getBookingsByUser,
+  getUserBookings,
 };
