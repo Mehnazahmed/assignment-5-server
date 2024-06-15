@@ -16,5 +16,6 @@ router.post(
   validateRequest(authValidations.loginValidationSchema),
   authControllers.loginUser
 );
+router.get("/", authControllers.checkAvailability);
 
 export const AuthRoutes = router;

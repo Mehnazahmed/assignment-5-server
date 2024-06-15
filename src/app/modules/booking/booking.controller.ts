@@ -80,7 +80,7 @@ const getUserBookings = catchAsync(
     const { userEmail } = req.user;
 
     console.log(req.user);
-    console.log(userEmail);
+    console.log("last", userEmail);
 
     const bookings = await bookingServices.getBookingsByUser(userEmail);
 
@@ -105,33 +105,33 @@ const deleteBooking = catchAsync(async (req, res) => {
   });
 });
 
-const checkAvailability = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { date } = req.query;
-    const availableSlots = await bookingServices.checkAvailabilityFromDb(
-      date as string
-    );
+// const checkAvailability = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   try {
+//     const { date } = req.query;
+//     const availableSlots = await bookingServices.checkAvailabilityFromDb(
+//       date as string
+//     );
 
-    // Send the response
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: "Availability checked successfully",
-      data: availableSlots,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+//     // Send the response
+//     sendResponse(res, {
+//       statusCode: httpStatus.OK,
+//       success: true,
+//       message: "Availability checked successfully",
+//       data: availableSlots,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 export const bookingControllers = {
   createBooking,
   getAllBookings,
   deleteBooking,
-  checkAvailability,
+
   getUserBookings,
 };

@@ -1,4 +1,6 @@
+import { User } from "../user/user.model";
 import { findAvailableSlots } from "./booking.const";
+import { TBookingDocument, TUserDocument } from "./booking.constant";
 import { TBooking } from "./booking.interface";
 import { Booking } from "./booking.model";
 
@@ -20,15 +22,40 @@ const deleteBookingFromDB = async (id: string) => {
     {
       new: true,
     }
-  ).populate("Facility");
+  ).populate("facility");
   return result;
 };
 
+// const getBookingsByUser = async (userEmail: any) => {
+//   const user = await User.find({ email: userEmail });
+//   console.log(user);
+//   const userId = user._id;
+//   const userBookings = await Booking.findOne({ user: userId }).populate(
+//     "facility"
+//   );
+//   return userBookings;
+// };
+
 const getBookingsByUser = async (userEmail: string) => {
-  const userBookings = await Booking.find({ user: userEmail }).populate(
-    "facility"
-  );
-  return userBookings;
+  try {
+    // Step 1: Query the User by email
+    const user = await User.findOne({ email: userEmail });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const userId = user._id;
+
+    const userBookings = await Booking.find({ user: userId }).populate(
+      "facility"
+    );
+
+    return userBookings;
+  } catch (error) {
+    console.error("Error in getBookingsByUser:", error);
+    throw error; // Rethrow the error to handle it upstream
+  }
 };
 
 const checkAvailabilityFromDb = async (date: string) => {

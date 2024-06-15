@@ -6,6 +6,8 @@ import { User } from "../user/user.model";
 import { TLoginUser } from "./auth.interface";
 import { createToken } from "./auth.utils";
 import config from "../../config";
+import { findAvailableSlots } from "../booking/booking.const";
+import { Booking } from "../booking/booking.model";
 
 const userSignUpIntoDb = async (userData: TUser) => {
   const result = await User.create(userData);
@@ -65,8 +67,26 @@ const loginUser = async (payload: TLoginUser) => {
   };
 };
 
+const checkAvailabilityFromDb = async (date: string) => {
+  const bookingDate = date ? new Date(date) : new Date();
+
+  const formattedDate = bookingDate.toISOString().split("T")[0];
+
+  const bookings = await Booking.find({
+    date: new Date(formattedDate),
+    isBooked: "confirmed",
+  });
+
+  const fullDaySlots = [{ startTime: "08:00:00", endTime: "20:00:00" }];
+
+  const availableSlots = findAvailableSlots(bookings, fullDaySlots);
+
+  return availableSlots;
+};
+
 export const authServices = {
   userSignUpIntoDb,
   loginUser,
   getUserByEmailFromDb,
+  checkAvailabilityFromDb,
 };

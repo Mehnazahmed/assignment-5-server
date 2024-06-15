@@ -17,6 +17,6 @@ app.use(globalErrorHandler);
 
 //Not Found
 app.use(notFound);
-app.use(notDataFound);
+// app.use(notDataFound);
 
 export default app;

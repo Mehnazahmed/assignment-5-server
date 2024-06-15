@@ -2,6 +2,7 @@ import httpStatus, { OK } from "http-status";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { authServices } from "./auth.service";
+import { NextFunction, Request, Response } from "express";
 
 const usersignUp = catchAsync(async (req, res) => {
   const userData = req.body;
@@ -33,7 +34,31 @@ const loginUser = catchAsync(async (req, res) => {
   });
 });
 
+const checkAvailability = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { date } = req.query;
+    const availableSlots = await authServices.checkAvailabilityFromDb(
+      date as string
+    );
+
+    // Send the response
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Availability checked successfully",
+      data: availableSlots,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const authControllers = {
   usersignUp,
   loginUser,
+  checkAvailability,
 };
