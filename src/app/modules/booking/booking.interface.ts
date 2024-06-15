@@ -9,12 +9,3 @@ export interface TBooking {
   payableAmount: number;
   isBooked: TBookingStatus;
 }
-export interface TBookingData {
-  date: Date;
-  startTime: string;
-  endTime: string;
-  // user: string;
-  facility: Types.ObjectId;
-  payableAmount: number;
-  isBooked: TBookingStatus;
-}

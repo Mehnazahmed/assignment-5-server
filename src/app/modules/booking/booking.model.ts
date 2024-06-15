@@ -17,12 +17,12 @@ const bookingSchema = new Schema<TBooking>({
   },
   user: {
     type: Schema.Types.ObjectId,
-    ref: "user", // Reference to the User model,
-    // required: true,
+    ref: "User", // Reference to the User model,
+    required: true,
   },
   facility: {
     type: Schema.Types.ObjectId,
-    ref: "facility", // Reference to the Facility model
+    ref: "Facility", // Reference to the Facility model
     required: true,
   },
   payableAmount: {

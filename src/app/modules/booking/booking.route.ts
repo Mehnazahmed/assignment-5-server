@@ -16,12 +16,20 @@ router.post(
 );
 
 //get all bookngs
-router.get("/", auth(USER_ROLE.user), bookingControllers.getAllBookings);
+router.get(
+  "/",
+  // auth(USER_ROLE.admin),
+  bookingControllers.getAllBookings
+);
 
 router.get("/", bookingControllers.checkAvailability);
-router.get("/user");
+router.get(
+  "/user",
+  // auth(USER_ROLE.user),
+  bookingControllers.getBookingsByUser
+);
 
 //cancel booking
-router.delete("/:id", bookingControllers.deleteBooking);
+router.delete("/:id", auth(USER_ROLE.user), bookingControllers.deleteBooking);
 
 export const BookingRoutes = router;

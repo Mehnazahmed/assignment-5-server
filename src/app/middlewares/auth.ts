@@ -28,7 +28,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
       ) as JwtPayload;
 
       const { role, userEmail } = decoded;
-      console.log("decoded", decoded);
+      //   console.log("decoded", decoded);
       // checking if the user is exist
       const user = await User.isUserExistsByEmail(userEmail);
 

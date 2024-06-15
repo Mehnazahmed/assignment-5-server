@@ -1,8 +1,6 @@
 import { Schema, model } from "mongoose";
 import { TFacility } from "./facility.interface";
 
-const mongoose = require("mongoose");
-
 const facilitySchema = new Schema<TFacility>({
   name: {
     type: String,

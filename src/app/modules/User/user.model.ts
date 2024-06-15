@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 
 const userSchema = new Schema<TUser, UserModel>(
   {
-    _id: { type: String },
+    // _id: { type: String },
     name: {
       type: String,
       required: [true, "Name is required"],

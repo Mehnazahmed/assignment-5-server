@@ -9,7 +9,7 @@ const createBookingIntoDB = async (payload: TBooking) => {
 };
 
 const getAllBookingsFromDB = async () => {
-  const result = await Booking.find().populate("facility");
+  const result = await Booking.find().populate("user").populate("facility");
   return result;
 };
 
@@ -20,7 +20,12 @@ const deleteBookingFromDB = async (id: string) => {
     {
       new: true,
     }
-  ).populate("facility");
+  ).populate("Facility");
+  return result;
+};
+
+const getBookingsByUser = async (id: string) => {
+  const result = await Booking.findById(id).populate("Facility");
   return result;
 };
 
@@ -46,4 +51,5 @@ export const bookingServices = {
   getAllBookingsFromDB,
   deleteBookingFromDB,
   checkAvailabilityFromDb,
+  getBookingsByUser,
 };
