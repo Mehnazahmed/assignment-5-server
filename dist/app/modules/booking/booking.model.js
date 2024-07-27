@@ -44,14 +44,36 @@ const bookingSchema = new mongoose_1.Schema({
         required: true,
         enum: ["confirmed", "unconfirmed", "canceled"],
     },
+}, {
+    timestamps: true,
 });
+// Pre-save hook to calculate payable amount before saving the booking
+// bookingSchema.pre("save", async function (this: TBooking & Document, next) {
+//   const booking = this as TBooking & Document;
+//   const facility = await model("Facility").findById(booking.facility);
+//   if (!facility) {
+//     throw new Error("Facility not found for this booking.");
+//   }
+//   const startTime = new Date(
+//     `${booking.date.toISOString().split("T")[0]}T${booking.startTime}`
+//   );
+//   const endTime = new Date(
+//     `${booking.date.toISOString().split("T")[0]}T${booking.endTime}`
+//   );
+//   booking.payableAmount = calculatePayableAmount(
+//     startTime,
+//     endTime,
+//     facility.pricePerHour
+//   );
+//   next();
+// });
 // Pre-save hook to calculate payable amount before saving the booking
 bookingSchema.pre("save", function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         const booking = this;
         const facility = yield (0, mongoose_1.model)("Facility").findById(booking.facility);
         if (!facility) {
-            throw new Error("Facility not found for this booking.");
+            return next(new Error("Facility not found for this booking."));
         }
         const startTime = new Date(`${booking.date.toISOString().split("T")[0]}T${booking.startTime}`);
         const endTime = new Date(`${booking.date.toISOString().split("T")[0]}T${booking.endTime}`);
@@ -59,4 +81,5 @@ bookingSchema.pre("save", function (next) {
         next();
     });
 });
+bookingSchema.index({ date: 1, facility: 1, startTime: 1, endTime: 1 });
 exports.Booking = (0, mongoose_1.model)("Booking", bookingSchema);

@@ -1,10 +1,34 @@
 import { User } from "../user/user.model";
-import { findAvailableSlots } from "./booking.const";
+import { findAvailableSlots, fullDaySlots, Slot } from "./booking.const";
 import { TBookingDocument, TUserDocument } from "./booking.constant";
 import { TBooking } from "./booking.interface";
 import { Booking } from "./booking.model";
 
+// const createBookingIntoDB = async (payload: TBooking) => {
+//   const result = await Booking.create(payload);
+
+//   return result;
+// };
 const createBookingIntoDB = async (payload: TBooking) => {
+  const { date, startTime, endTime, facility } = payload;
+
+  // Check for overlapping bookings
+  const overlappingBooking = await Booking.findOne({
+    date,
+    facility,
+    $or: [
+      { startTime: { $lt: endTime, $gte: startTime } },
+      { endTime: { $lte: endTime, $gt: startTime } },
+    ],
+  });
+
+  if (overlappingBooking) {
+    throw new Error(
+      "The facility is unavailable during the requested time slot."
+    );
+  }
+
+  // If no overlapping booking is found, create the booking
   const result = await Booking.create(payload);
 
   return result;
@@ -26,59 +50,82 @@ const deleteBookingFromDB = async (id: string) => {
   return result;
 };
 
-// const getBookingsByUser = async (userEmail: any) => {
-//   const user = await User.find({ email: userEmail });
-//   console.log(user);
-//   const userId = user._id;
-//   const userBookings = await Booking.findOne({ user: userId }).populate(
-//     "facility"
-//   );
-//   return userBookings;
+const getBookingsByUser = async (userEmail: any) => {
+  const user = await User.findOne({ email: userEmail });
+  // console.log(user);
+  if (!user) {
+    throw new Error("User not found");
+  }
+  const userId = user._id;
+  const userBookings = await Booking.find({ user: userId }).populate(
+    "facility"
+  );
+  return userBookings;
+};
+
+// const getBookingsByUser = async (userEmail: string) => {
+//   try {
+//     // Step 1: Query the User by email
+//     const user = await User.findOne({ email: userEmail });
+
+//     if (!user) {
+//       throw new Error("User not found");
+//     }
+
+//     const userId = user._id;
+
+//     const userBookings = await Booking.find({ user: userId }).populate(
+//       "facility"
+//     );
+
+//     return userBookings;
+//   } catch (error) {
+//     console.error("Error in getBookingsByUser:", error);
+//     throw error;
+//   }
 // };
 
-const getBookingsByUser = async (userEmail: string) => {
-  try {
-    // Step 1: Query the User by email
-    const user = await User.findOne({ email: userEmail });
+// const checkAvailabilityFromDB = async (date: string) => {
+//   const bookingDate = date ? new Date(date) : new Date();
 
-    if (!user) {
-      throw new Error("User not found");
-    }
+//   const formattedDate = bookingDate.toISOString().split("T")[0];
 
-    const userId = user._id;
+//   const bookings = await Booking.find({
+//     date: new Date(formattedDate),
+//     isBooked: "confirmed",
+//   });
 
-    const userBookings = await Booking.find({ user: userId }).populate(
-      "facility"
-    );
+//   const fullDaySlots = [{ startTime: "08:00:00", endTime: "20:00:00" }];
 
-    return userBookings;
-  } catch (error) {
-    console.error("Error in getBookingsByUser:", error);
-    throw error; // Rethrow the error to handle it upstream
-  }
-};
+//   const availableSlots = findAvailableSlots(bookings, fullDaySlots);
 
-const checkAvailabilityFromDb = async (date: string) => {
-  const bookingDate = date ? new Date(date) : new Date();
+//   return availableSlots;
+// };
 
-  const formattedDate = bookingDate.toISOString().split("T")[0];
+// Function to check availability
+// const checkAvailabilityFromDB = async (date: string) => {
+//   const bookingDate = date ? new Date(date) : new Date();
+//   const formattedDate = bookingDate.toISOString().split("T")[0];
 
-  const bookings = await Booking.find({
-    date: new Date(formattedDate),
-    isBooked: "confirmed",
-  });
+//   // Fetch bookings for the specified date
+//   const bookings = await Booking.find({
+//     date: new Date(formattedDate),
+//     isBooked: "confirmed",
+//   });
 
-  const fullDaySlots = [{ startTime: "08:00:00", endTime: "20:00:00" }];
+//   // Find available slots
+//   const availableSlots = findAvailableSlots(bookings);
 
-  const availableSlots = findAvailableSlots(bookings, fullDaySlots);
+//   console.log("Bookings:", bookings); // Debug: Print fetched bookings
+//   console.log("Available Slots:", availableSlots); // Debug: Print available slots
 
-  return availableSlots;
-};
+//   return availableSlots;
+// };
 
 export const bookingServices = {
   createBookingIntoDB,
   getAllBookingsFromDB,
   deleteBookingFromDB,
-  checkAvailabilityFromDb,
+  // checkAvailabilityFromDB,
   getBookingsByUser,
 };

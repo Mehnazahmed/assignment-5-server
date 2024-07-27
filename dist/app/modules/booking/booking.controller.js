@@ -20,26 +20,71 @@ const AppError_1 = __importDefault(require("../../errors/AppError"));
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const user_model_1 = require("../user/user.model");
 const mongoose_1 = __importDefault(require("mongoose"));
+// const createBooking = catchAsync(
+//   async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
+//     try {
+//       const userData = req.user;
+//       const email = userData.userEmail;
+//       // console.log(user);
+//       const userInfo = await User.isUserExistsByEmail(email);
+//       // console.log(userInfo);
+//       const userId = userInfo._id;
+//       // console.log("u", userId);
+//       if (!userData) {
+//         throw new AppError(
+//           httpStatus.UNAUTHORIZED,
+//           "User authentication failed"
+//         );
+//       }
+//       const { facility, user, date, startTime, endTime } = req.body;
+//       const bookingData: TBooking = {
+//         facility,
+//         date: new Date(date),
+//         startTime,
+//         endTime,
+//         user: new mongoose.Types.ObjectId(userId),
+//         // user: new mongoose.Types.ObjectId(userId),
+//         payableAmount: 0,
+//         isBooked: "confirmed",
+//       };
+//       const newBooking = await bookingServices.createBookingIntoDB(bookingData);
+//       // Send a successful response
+//       sendResponse(res, {
+//         statusCode: httpStatus.OK,
+//         success: true,
+//         message: "Booking created successfully",
+//         data: {
+//           _id: newBooking._id,
+//           facility: newBooking.facility.toString(),
+//           date: newBooking.date.toISOString().split("T")[0],
+//           startTime: newBooking.startTime,
+//           endTime: newBooking.endTime,
+//           user: newBooking.user.toString(),
+//           payableAmount: newBooking.payableAmount,
+//           isBooked: newBooking.isBooked,
+//         },
+//       });
+//     } catch (error) {
+//       next(error);
+//     }
+//   }
+// );
 const createBooking = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userData = req.user;
         const email = userData.userEmail;
-        // console.log(user);
         const userInfo = yield user_model_1.User.isUserExistsByEmail(email);
-        console.log(userInfo);
         const userId = userInfo._id;
-        // console.log("u", userId);
         if (!userData) {
             throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, "User authentication failed");
         }
-        const { facility, user, date, startTime, endTime } = req.body;
+        const { facility, date, startTime, endTime } = req.body;
         const bookingData = {
             facility,
             date: new Date(date),
             startTime,
             endTime,
             user: new mongoose_1.default.Types.ObjectId(userId),
-            // user: new mongoose.Types.ObjectId(userId),
             payableAmount: 0,
             isBooked: "confirmed",
         };
@@ -49,7 +94,16 @@ const createBooking = (0, catchAsync_1.default)((req, res, next) => __awaiter(vo
             statusCode: http_status_1.default.OK,
             success: true,
             message: "Booking created successfully",
-            data: newBooking,
+            data: {
+                _id: newBooking._id,
+                facility: newBooking.facility.toString(),
+                date: newBooking.date.toISOString().split("T")[0],
+                startTime: newBooking.startTime,
+                endTime: newBooking.endTime,
+                user: newBooking.user.toString(),
+                payableAmount: newBooking.payableAmount,
+                isBooked: newBooking.isBooked,
+            },
         });
     }
     catch (error) {
@@ -73,8 +127,8 @@ const getAllBookings = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
 }));
 const getUserBookings = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userEmail } = req.user;
-    console.log(req.user);
-    console.log("last", userEmail);
+    // console.log(req.user);
+    // console.log("last", userEmail);
     const bookings = yield booking_service_1.bookingServices.getBookingsByUser(userEmail);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
@@ -100,7 +154,7 @@ const deleteBooking = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
 // ) => {
 //   try {
 //     const { date } = req.query;
-//     const availableSlots = await bookingServices.checkAvailabilityFromDb(
+//     const availableSlots = await bookingServices.checkAvailabilityFromDB(
 //       date as string
 //     );
 //     // Send the response
@@ -114,9 +168,32 @@ const deleteBooking = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
 //     next(error);
 //   }
 // };
+// const checkAvailability = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   try {
+//     const { date } = req.query;
+//     const availableSlots = await bookingServices.checkAvailabilityFromDB(
+//       date as string
+//     );
+//     console.log("Available Slots:", availableSlots); // Debugging line
+//     // Send the response
+//     res.json({
+//       success: true,
+//       statusCode: httpStatus.OK,
+//       message: "Availability checked successfully",
+//       data: availableSlots,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 exports.bookingControllers = {
     createBooking,
     getAllBookings,
     deleteBooking,
+    // checkAvailability,
     getUserBookings,
 };

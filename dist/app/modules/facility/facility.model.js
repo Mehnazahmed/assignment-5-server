@@ -23,5 +23,7 @@ const facilitySchema = new mongoose_1.Schema({
         type: Boolean,
         default: false,
     },
+}, {
+    timestamps: true,
 });
 exports.Facility = (0, mongoose_1.model)("Facility", facilitySchema);

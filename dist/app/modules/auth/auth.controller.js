@@ -44,11 +44,12 @@ const loginUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void
 const checkAvailability = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { date } = req.query;
-        const availableSlots = yield auth_service_1.authServices.checkAvailabilityFromDb(date);
+        const availableSlots = yield auth_service_1.authServices.checkAvailabilityFromDB(date);
+        console.log("Available Slots:", availableSlots); // Debugging line
         // Send the response
-        (0, sendResponse_1.default)(res, {
-            statusCode: http_status_1.default.OK,
+        res.json({
             success: true,
+            statusCode: http_status_1.default.OK,
             message: "Availability checked successfully",
             data: availableSlots,
         });

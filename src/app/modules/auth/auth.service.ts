@@ -51,11 +51,12 @@ const loginUser = async (payload: TLoginUser) => {
   // const refreshToken = createToken(
   //   jwtPayload,
   //   config.jwt_refresh_secret as string,
-  //   config.jwt_refresh_expires_in as string,
+  //   config.jwt_refresh_expires_in as string
   // );
 
   return {
     accessToken,
+    // refreshToken,
     data: {
       // _id: user._id,
       name: user.name,
@@ -67,26 +68,27 @@ const loginUser = async (payload: TLoginUser) => {
   };
 };
 
-const checkAvailabilityFromDb = async (date: string) => {
+const checkAvailabilityFromDB = async (date: string) => {
   const bookingDate = date ? new Date(date) : new Date();
-
   const formattedDate = bookingDate.toISOString().split("T")[0];
 
+  // Fetch bookings for the specified date
   const bookings = await Booking.find({
     date: new Date(formattedDate),
     isBooked: "confirmed",
   });
 
-  const fullDaySlots = [{ startTime: "08:00:00", endTime: "20:00:00" }];
+  // Find available slots
+  const availableSlots = findAvailableSlots(bookings);
 
-  const availableSlots = findAvailableSlots(bookings, fullDaySlots);
+  // console.log("Bookings:", bookings); // Debug: Print fetched bookings
+  // console.log("Available Slots:", availableSlots); // Debug: Print available slots
 
   return availableSlots;
 };
-
 export const authServices = {
   userSignUpIntoDb,
   loginUser,
   getUserByEmailFromDb,
-  checkAvailabilityFromDb,
+  checkAvailabilityFromDB,
 };

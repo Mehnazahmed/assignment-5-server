@@ -47,10 +47,11 @@ const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     // const refreshToken = createToken(
     //   jwtPayload,
     //   config.jwt_refresh_secret as string,
-    //   config.jwt_refresh_expires_in as string,
+    //   config.jwt_refresh_expires_in as string
     // );
     return {
         accessToken,
+        // refreshToken,
         data: {
             // _id: user._id,
             name: user.name,
@@ -61,20 +62,23 @@ const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
         },
     };
 });
-const checkAvailabilityFromDb = (date) => __awaiter(void 0, void 0, void 0, function* () {
+const checkAvailabilityFromDB = (date) => __awaiter(void 0, void 0, void 0, function* () {
     const bookingDate = date ? new Date(date) : new Date();
     const formattedDate = bookingDate.toISOString().split("T")[0];
+    // Fetch bookings for the specified date
     const bookings = yield booking_model_1.Booking.find({
         date: new Date(formattedDate),
         isBooked: "confirmed",
     });
-    const fullDaySlots = [{ startTime: "08:00:00", endTime: "20:00:00" }];
-    const availableSlots = (0, booking_const_1.findAvailableSlots)(bookings, fullDaySlots);
+    // Find available slots
+    const availableSlots = (0, booking_const_1.findAvailableSlots)(bookings);
+    // console.log("Bookings:", bookings); // Debug: Print fetched bookings
+    // console.log("Available Slots:", availableSlots); // Debug: Print available slots
     return availableSlots;
 });
 exports.authServices = {
     userSignUpIntoDb,
     loginUser,
     getUserByEmailFromDb,
-    checkAvailabilityFromDb,
+    checkAvailabilityFromDB,
 };

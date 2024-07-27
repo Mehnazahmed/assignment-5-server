@@ -8,6 +8,7 @@ const cors_1 = __importDefault(require("cors"));
 const globalErrorHandler_1 = __importDefault(require("./app/middlewares/globalErrorHandler"));
 const notFound_1 = __importDefault(require("./app/middlewares/notFound"));
 const routes_1 = __importDefault(require("./app/routes"));
+const noDataFound_1 = __importDefault(require("./app/middlewares/noDataFound"));
 const app = (0, express_1.default)();
 //parsers
 app.use(express_1.default.json());
@@ -16,5 +17,5 @@ app.use("/api", routes_1.default);
 app.use(globalErrorHandler_1.default);
 //Not Found
 app.use(notFound_1.default);
-// app.use(notDataFound);
+app.use(noDataFound_1.default);
 exports.default = app;

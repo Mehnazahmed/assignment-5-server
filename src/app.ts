@@ -4,6 +4,7 @@ import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 import notFound from "./app/middlewares/notFound";
 import router from "./app/routes";
 import notDataFound from "./app/middlewares/noDataFound";
+import noDataFound from "./app/middlewares/noDataFound";
 
 const app: Application = express();
 
@@ -17,6 +18,6 @@ app.use(globalErrorHandler);
 
 //Not Found
 app.use(notFound);
-// app.use(notDataFound);
+app.use(noDataFound);
 
 export default app;

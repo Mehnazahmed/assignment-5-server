@@ -3,6 +3,7 @@ import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { authServices } from "./auth.service";
 import { NextFunction, Request, Response } from "express";
+import { bookingServices } from "../booking/booking.service";
 
 const usersignUp = catchAsync(async (req, res) => {
   const userData = req.body;
@@ -41,14 +42,16 @@ const checkAvailability = async (
 ) => {
   try {
     const { date } = req.query;
-    const availableSlots = await authServices.checkAvailabilityFromDb(
+    const availableSlots = await authServices.checkAvailabilityFromDB(
       date as string
     );
 
+    console.log("Available Slots:", availableSlots); // Debugging line
+
     // Send the response
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
+    res.json({
       success: true,
+      statusCode: httpStatus.OK,
       message: "Availability checked successfully",
       data: availableSlots,
     });
