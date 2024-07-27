@@ -14,6 +14,9 @@ const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
 app.use("/api", routes_1.default);
+app.get("/api/", (req, res) => {
+    res.send({ message: "Welcome to Assignment-3" });
+});
 app.use(globalErrorHandler_1.default);
 //Not Found
 app.use(notFound_1.default);
