@@ -14,7 +14,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
       res: Response,
       next: NextFunction
     ) => {
-      const token = req.headers.authorization;
+      const token = req.headers.authorization?.split(" ")[1];
 
       // checking if the token is missing
       if (!token) {
