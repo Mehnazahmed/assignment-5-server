@@ -22,7 +22,7 @@ const userValidationSchema = z.object({
       required_error: "Phone number is required",
       invalid_type_error: "Phone number must be a string",
     }),
-    role: z.enum(["admin", "user"], {
+    role: z.enum(["admin", "user", "superAdmin"], {
       required_error: "Role is required",
       invalid_type_error: "Role must be either admin or user",
     }),

@@ -5,18 +5,18 @@ import { authServices } from "./auth.service";
 import { NextFunction, Request, Response } from "express";
 import { bookingServices } from "../booking/booking.service";
 
-const usersignUp = catchAsync(async (req, res) => {
-  const userData = req.body;
+// const usersignUp = catchAsync(async (req, res) => {
+//   const userData = req.body;
 
-  const result = await authServices.userSignUpIntoDb(userData);
+//   const result = await authServices.userSignUpIntoDb(userData);
 
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "User registered successfully",
-    data: result,
-  });
-});
+//   sendResponse(res, {
+//     statusCode: httpStatus.OK,
+//     success: true,
+//     message: "User registered successfully",
+//     data: result,
+//   });
+// });
 
 const loginUser = catchAsync(async (req, res) => {
   const result = await authServices.loginUser(req.body);
@@ -61,7 +61,6 @@ const checkAvailability = async (
 };
 
 export const authControllers = {
-  usersignUp,
   loginUser,
   checkAvailability,
 };

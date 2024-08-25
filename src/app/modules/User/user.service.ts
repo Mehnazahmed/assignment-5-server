@@ -5,20 +5,35 @@ import { sendImageToCloudinary } from "../../utils/sendImageToCloudinary";
 import { TUser } from "./user.interface";
 import { User } from "./user.model";
 
-const createUserIntoDB = async (
-  file: any,
+// const createUserIntoDB = async (file: any, payload: TUser) => {
+//   // create a user object
+//   const userData: Partial<TUser> = {};
 
-  payload: TUser
-) => {
+//   if (file) {
+//     const imageName = `${userData._id}${payload?.name}`;
+//     const path = file?.path;
+
+//     //send image to cloudinary
+//     const { secure_url } = await sendImageToCloudinary(imageName, path);
+//     payload.profileImg = secure_url as string;
+//   }
+
+//   // create a user
+//   const newUser = await User.create([userData]); // array
+
+//   if (!newUser.length) {
+//     throw new AppError(httpStatus.BAD_REQUEST, "Failed to create user");
+//   }
+
+//   return newUser;
+// };
+
+const createUserIntoDB = async (file: any, payload: TUser) => {
   // create a user object
-  const userData: Partial<TUser> = {};
-
-  userData.role = "user";
-
-  userData.email = payload.email;
+  // const userData: Partial<TUser> = {};
 
   if (file) {
-    const imageName = `${userData._id}${payload?.name}`;
+    const imageName = `${payload?.name}`;
     const path = file?.path;
 
     //send image to cloudinary
@@ -27,35 +42,31 @@ const createUserIntoDB = async (
   }
 
   // create a user
-  const newUser = await User.create([userData]); // array
+  const newUser = await User.create([payload]); // array
 
   if (!newUser.length) {
     throw new AppError(httpStatus.BAD_REQUEST, "Failed to create user");
   }
 
   return newUser;
+
+  // const result = await User.create(userData);
+
+  // return result;
 };
 
-const createAdminIntoDB = async (
-  file: any,
-
-  payload: TUser
-) => {
+const createAdminIntoDB = async (file: any, payload: TUser) => {
   // create a user object
-  const userData: Partial<TUser> = {};
-
-  userData.role = "admin";
-
-  userData.email = payload.email;
+  // const userData: Partial<TUser> = {};
 
   if (file) {
-    const imageName = `${userData._id}${payload?.name}`;
+    const imageName = `${payload?.name}`;
     const path = file?.path;
+
     //send image to cloudinary
     const { secure_url } = await sendImageToCloudinary(imageName, path);
     payload.profileImg = secure_url as string;
   }
-
   const newAdmin = await User.create([payload]);
 
   if (!newAdmin.length) {

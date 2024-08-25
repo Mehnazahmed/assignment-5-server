@@ -27,7 +27,7 @@ const userSchema = new Schema<TUser, UserModel>(
     },
     role: {
       type: String,
-      enum: ["admin", "user"],
+      enum: ["admin", "user", "superAdmin"],
       required: [true, "Role is required"],
     },
     address: {

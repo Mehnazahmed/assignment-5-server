@@ -9,11 +9,11 @@ import config from "../../config";
 import { findAvailableSlots } from "../booking/booking.const";
 import { Booking } from "../booking/booking.model";
 
-const userSignUpIntoDb = async (userData: TUser) => {
-  const result = await User.create(userData);
+// const userSignUpIntoDb = async (userData: TUser) => {
+//   const result = await User.create(userData);
 
-  return result;
-};
+//   return result;
+// };
 
 const getUserByEmailFromDb = async (email: string) => {
   const user = await User.findOne({ email });
@@ -87,7 +87,6 @@ const checkAvailabilityFromDB = async (date: string) => {
   return availableSlots;
 };
 export const authServices = {
-  userSignUpIntoDb,
   loginUser,
   getUserByEmailFromDb,
   checkAvailabilityFromDB,

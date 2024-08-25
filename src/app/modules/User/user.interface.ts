@@ -8,7 +8,7 @@ export interface TUser {
   password: string;
   phone: string;
   profileImg?: string;
-  role: "admin" | "user";
+  role: "admin" | "user" | "superAdmin";
   address: string;
 }
 

@@ -10,24 +10,35 @@ import { UserControllers } from "../user/user.controller";
 
 const router = Router();
 
+//user signup
+
+// router.post(
+//   "/create-user",
+//   // upload.single("file"),
+//   // (req: Request & { user?: any }, res: Response, next: NextFunction) => {
+//   //   req.body = JSON.parse(req.body.data);
+//   //   next();
+//   // },
+//   validateRequest(UserValidation.userValidationSchema),
+//   UserControllers.createUser
+// );
 router.post(
-  "/signup",
+  "/create-user",
   upload.single("file"),
+  (req: Request & { user?: any }, res: Response, next: NextFunction) => {
+    req.body = JSON.parse(req.body.data);
+    next();
+  },
   validateRequest(UserValidation.userValidationSchema),
-  authControllers.usersignUp
+  UserControllers.createUser
 );
 
-router.post(
-  "/login",
-  validateRequest(authValidations.loginValidationSchema),
-  authControllers.loginUser
-);
-
+//create admin
 router.post(
   "/create-admin",
-  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
+  auth(USER_ROLE.superAdmin),
   upload.single("file"),
-  (req: Request, res: Response, next: NextFunction) => {
+  (req: Request & { user?: any }, res: Response, next: NextFunction) => {
     req.body = JSON.parse(req.body.data);
     next();
   },
@@ -35,6 +46,21 @@ router.post(
   UserControllers.createAdmin
 );
 
+// router.post(
+//   "/create-user",
+
+//   validateRequest(UserValidation.userValidationSchema),
+//   authControllers.usersignUp
+// );
+
+//user login
+router.post(
+  "/login",
+  validateRequest(authValidations.loginValidationSchema),
+  authControllers.loginUser
+);
+
+//check time availability
 router.get("/", authControllers.checkAvailability);
 
 export const AuthRoutes = router;
