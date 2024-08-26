@@ -35,6 +35,8 @@ const loginUser = catchAsync(async (req, res) => {
   });
 });
 
+//check availability
+
 const checkAvailability = async (
   req: Request,
   res: Response,

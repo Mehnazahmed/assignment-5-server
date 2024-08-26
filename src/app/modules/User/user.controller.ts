@@ -17,16 +17,15 @@ import { UserServices } from "./user.service";
 //   });
 // });
 const createUser = catchAsync(async (req, res) => {
-  // const userData = req.body;
+  const userData = req.body;
   const file = req.file;
-  console.log(req.file);
-  // const result = await UserServices.createUserIntoDB(file, userData);
+  const result = await UserServices.createUserIntoDB(file, userData);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "User registered successfully",
-    data: null,
+    message: "User is registered successfully",
+    data: result,
   });
 });
 

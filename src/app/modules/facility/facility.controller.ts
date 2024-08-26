@@ -4,7 +4,13 @@ import sendResponse from "../../utils/sendResponse";
 import { facilityServices } from "./facility.service";
 
 const createFacility = catchAsync(async (req, res) => {
-  const result = await facilityServices.createFacilityIntoDB(req.body);
+  const facilityData = req.body;
+  const file = req.file;
+
+  const result = await facilityServices.createFacilityIntoDB(
+    file,
+    facilityData
+  );
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
