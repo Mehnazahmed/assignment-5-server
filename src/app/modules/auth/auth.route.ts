@@ -26,7 +26,7 @@ router.post(
   "/create-user",
   upload.single("file"),
   (req: Request & { user?: any }, res: Response, next: NextFunction) => {
-    req.body = JSON.parse(req.body.data);
+    // req.body = JSON.parse(req.body.data);
     next();
   },
   validateRequest(UserValidation.userValidationSchema),
@@ -36,7 +36,7 @@ router.post(
 //create admin
 router.post(
   "/create-admin",
-  auth(USER_ROLE.superAdmin),
+  auth(USER_ROLE.admin),
   upload.single("file"),
   (req: Request & { user?: any }, res: Response, next: NextFunction) => {
     req.body = JSON.parse(req.body.data);
