@@ -46,19 +46,24 @@ router.post(
   UserControllers.createAdmin
 );
 
-// router.post(
-//   "/create-user",
-
-//   validateRequest(UserValidation.userValidationSchema),
-//   authControllers.usersignUp
-// );
-
 //user login
 router.post(
   "/login",
   validateRequest(authValidations.loginValidationSchema),
   authControllers.loginUser
 );
+
+router.post(
+  "/refresh-token",
+  validateRequest(authValidations.refreshTokenValidationSchema),
+  authControllers.refreshToken
+);
+
+// router.post(
+//   '/forget-password',
+//   validateRequest(authValidations.forgetPasswordValidationSchema),
+//   AuthControllers.forgetPassword,
+// );
 
 //check time availability
 router.get("/", authControllers.checkAvailability);

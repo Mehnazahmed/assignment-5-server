@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from "http-status";
 import config from "../../config";
 import AppError from "../../errors/AppError";
@@ -76,7 +77,39 @@ const createAdminIntoDB = async (file: any, payload: TUser) => {
   return newAdmin;
 };
 
+const getAllUsersFromDB = async () => {
+  const result = await User.find({ isDeleted: false });
+  return result;
+};
+
+const getSingleUserFromDB = async (email: string) => {
+  const result = await User.findOne({ email });
+  return result;
+};
+
+const updateUserFromDB = async (id: string, payload: Partial<TUser>) => {
+  const result = await User.findOneAndUpdate({ _id: id }, payload, {
+    new: true,
+  });
+  return result;
+};
+
+const deleteUserFromDB = async (id: string) => {
+  const result = await User.findByIdAndUpdate(
+    id,
+    { isDeleted: true },
+    {
+      new: true,
+    }
+  );
+  return result;
+};
+
 export const UserServices = {
   createUserIntoDB,
   createAdminIntoDB,
+  getAllUsersFromDB,
+  getSingleUserFromDB,
+  updateUserFromDB,
+  deleteUserFromDB,
 };

@@ -9,11 +9,18 @@ const app: Application = express();
 
 //parsers
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "http://localhost:5000"],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 app.use("/api", router);
 app.get("/", (req: Request, res: Response) => {
-  res.send({ message: "Welcome to Assignment-3" });
+  res.send({ message: "Welcome to Assignment-5" });
 });
 
 app.use(globalErrorHandler);

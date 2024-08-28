@@ -4,7 +4,7 @@ import { TUser } from "../user/user.interface";
 import { User } from "../user/user.model";
 
 import { TLoginUser } from "./auth.interface";
-import { createToken } from "./auth.utils";
+import { createToken, verifyToken } from "./auth.utils";
 import config from "../../config";
 import { findAvailableSlots } from "../booking/booking.const";
 import { Booking } from "../booking/booking.model";
@@ -48,15 +48,15 @@ const loginUser = async (payload: TLoginUser) => {
     config.jwt_access_expires_in as string
   );
 
-  // const refreshToken = createToken(
-  //   jwtPayload,
-  //   config.jwt_refresh_secret as string,
-  //   config.jwt_refresh_expires_in as string
-  // );
+  const refreshToken = createToken(
+    jwtPayload,
+    config.jwt_refresh_secret as string,
+    config.jwt_refresh_expires_in as string
+  );
 
   return {
     accessToken,
-    // refreshToken,
+    refreshToken,
     data: {
       // _id: user._id,
       name: user.name,
@@ -67,6 +67,73 @@ const loginUser = async (payload: TLoginUser) => {
     },
   };
 };
+
+const refreshToken = async (token: string) => {
+  // checking if the given token is valid
+  const decoded = verifyToken(token, config.jwt_refresh_secret as string);
+
+  const { userEmail, iat } = decoded;
+
+  // checking if the user is exist
+  const user = await User.isUserExistsByEmail(userEmail);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "This user is not found !");
+  }
+  // checking if the user is already deleted
+  const isDeleted = user?.isDeleted;
+
+  if (isDeleted) {
+    throw new AppError(httpStatus.FORBIDDEN, "This user is deleted !");
+  }
+
+  const jwtPayload = {
+    userEmail: user.email,
+    role: user.role,
+  };
+
+  const accessToken = createToken(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    config.jwt_access_expires_in as string
+  );
+
+  return {
+    accessToken,
+  };
+};
+
+// const forgetPassword = async (userId: string) => {
+//   // checking if the user is exist
+//   const user = await User.isUserExistsByCustomId(userId);
+
+//   if (!user) {
+//     throw new AppError(httpStatus.NOT_FOUND, "This user is not found !");
+//   }
+//   // checking if the user is already deleted
+//   const isDeleted = user?.isDeleted;
+
+//   if (isDeleted) {
+//     throw new AppError(httpStatus.FORBIDDEN, "This user is deleted !");
+//   }
+
+//   const jwtPayload = {
+//     userEmail: user.email,
+//     role: user.role,
+//   };
+
+//   const resetToken = createToken(
+//     jwtPayload,
+//     config.jwt_access_secret as string,
+//     "10m"
+//   );
+
+//   const resetUILink = `${config.reset_pass_ui_link}?email=${user.email}&token=${resetToken} `;
+
+//   sendEmail(user.email, resetUILink);
+
+//   console.log(resetUILink);
+// };
 
 const checkAvailabilityFromDB = async (date: string) => {
   const bookingDate = date ? new Date(date) : new Date();
@@ -86,8 +153,10 @@ const checkAvailabilityFromDB = async (date: string) => {
 
   return availableSlots;
 };
+
 export const authServices = {
   loginUser,
   getUserByEmailFromDb,
   checkAvailabilityFromDB,
+  refreshToken,
 };

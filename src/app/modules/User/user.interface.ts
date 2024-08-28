@@ -10,6 +10,7 @@ export interface TUser {
   profileImg?: string;
   role: "admin" | "user" | "superAdmin";
   address: string;
+  isDeleted?: boolean;
 }
 
 export interface UserModel extends Model<TUser> {

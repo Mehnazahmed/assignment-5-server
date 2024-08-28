@@ -34,6 +34,9 @@ const userSchema = new Schema<TUser, UserModel>(
       type: String,
       required: [true, "Address is required"],
     },
+    isDeleted: {
+      type: Boolean,
+    },
   },
   {
     toJSON: {

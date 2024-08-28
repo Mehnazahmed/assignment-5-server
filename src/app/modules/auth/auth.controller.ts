@@ -35,6 +35,31 @@ const loginUser = catchAsync(async (req, res) => {
   });
 });
 
+const refreshToken = catchAsync(async (req, res) => {
+  const { refreshToken } = req.cookies;
+  const result = await authServices.refreshToken(refreshToken);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Access token is retrieved succesfully!",
+    data: result,
+  });
+});
+
+// const forgetPassword = catchAsync(
+//   async (req: Request & { user?: any }, res) => {
+//     const userId = req.body.id;
+//     const result = await AuthServices.forgetPassword(userId);
+//     sendResponse(res, {
+//       statusCode: httpStatus.OK,
+//       success: true,
+//       message: "Reset link is generated succesfully!",
+//       data: result,
+//     });
+//   }
+// );
+
 //check availability
 
 const checkAvailability = async (
@@ -65,4 +90,6 @@ const checkAvailability = async (
 export const authControllers = {
   loginUser,
   checkAvailability,
+
+  refreshToken,
 };
