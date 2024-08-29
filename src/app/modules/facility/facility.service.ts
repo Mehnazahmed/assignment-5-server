@@ -24,7 +24,13 @@ const createFacilityIntoDB = async (file: any, payload: TFacility) => {
 };
 
 const getAllFacilitiesFromDB = async () => {
-  const result = await Facility.find();
+  const result = await Facility.find({
+    isDeleted: false,
+  });
+  return result;
+};
+const getFacilityByIdFromDB = async (id: string) => {
+  const result = await Facility.findById(id);
   return result;
 };
 
@@ -54,4 +60,5 @@ export const facilityServices = {
   updateFacilityFromDB,
   getAllFacilitiesFromDB,
   deleteFacilityFromDB,
+  getFacilityByIdFromDB,
 };

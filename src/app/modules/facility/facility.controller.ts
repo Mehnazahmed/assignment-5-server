@@ -55,9 +55,23 @@ const getAllFacilities = catchAsync(async (req, res) => {
   });
 });
 
+const getFaicilityById = catchAsync(async (req, res) => {
+  const { id } = req.params;
+
+  const facility = await facilityServices.getFacilityByIdFromDB(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Facilty retrieved successfully",
+    data: facility,
+  });
+});
+
 export const facilityControllers = {
   createFacility,
   updateFacility,
   deleteFacility,
   getAllFacilities,
+  getFaicilityById,
 };
