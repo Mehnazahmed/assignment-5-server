@@ -32,6 +32,7 @@ import { User } from "./user.model";
 const createUserIntoDB = async (file: any, payload: TUser) => {
   // create a user object
   // const userData: Partial<TUser> = {};
+  payload.isDeleted = false;
 
   if (file) {
     const imageName = `${payload?.name}`;
@@ -50,15 +51,12 @@ const createUserIntoDB = async (file: any, payload: TUser) => {
   }
 
   return newUser;
-
-  // const result = await User.create(userData);
-
-  // return result;
 };
 
 const createAdminIntoDB = async (file: any, payload: TUser) => {
   // create a user object
   // const userData: Partial<TUser> = {};
+  payload.isDeleted = false;
 
   if (file) {
     const imageName = `${payload?.name}`;

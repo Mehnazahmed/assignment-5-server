@@ -28,6 +28,14 @@ const loginUser = async (payload: TLoginUser) => {
     throw new AppError(httpStatus.NOT_FOUND, "This user is not found !");
   }
 
+  // checking if the user is already deleted
+
+  const isDeleted = user?.isDeleted;
+
+  if (isDeleted) {
+    throw new AppError(httpStatus.FORBIDDEN, "This user is deleted !");
+  }
+
   //checking if the password is correct
 
   if (!(await User.isPasswordMatched(payload?.password, user?.password)))
@@ -37,7 +45,7 @@ const loginUser = async (payload: TLoginUser) => {
 
   const jwtPayload = {
     userEmail: user.email,
-    // userId: user._id,
+    userId: user._id,
 
     role: user.role,
   };
@@ -57,6 +65,7 @@ const loginUser = async (payload: TLoginUser) => {
   return {
     accessToken,
     refreshToken,
+
     data: {
       // _id: user._id,
       name: user.name,
@@ -72,10 +81,11 @@ const refreshToken = async (token: string) => {
   // checking if the given token is valid
   const decoded = verifyToken(token, config.jwt_refresh_secret as string);
 
-  const { userEmail, iat } = decoded;
+  const { userEmail, userId, iat } = decoded;
 
   // checking if the user is exist
   const user = await User.isUserExistsByEmail(userEmail);
+  // const user = await User.isUserExistsByCustomId(userId);
 
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, "This user is not found !");
@@ -90,6 +100,7 @@ const refreshToken = async (token: string) => {
   const jwtPayload = {
     userEmail: user.email,
     role: user.role,
+    userId: user._id,
   };
 
   const accessToken = createToken(
