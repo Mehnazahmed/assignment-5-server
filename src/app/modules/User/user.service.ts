@@ -80,8 +80,13 @@ const getAllUsersFromDB = async () => {
   return result;
 };
 
-const getSingleUserFromDB = async (email: string) => {
+const getSingleUserByEmailFromDB = async (email: string) => {
   const result = await User.findOne({ email });
+  return result;
+};
+const getSingleUserByIdFromDB = async (id: string) => {
+  const result = await User.findById(id);
+  console.log(id);
   return result;
 };
 
@@ -107,7 +112,8 @@ export const UserServices = {
   createUserIntoDB,
   createAdminIntoDB,
   getAllUsersFromDB,
-  getSingleUserFromDB,
+  getSingleUserByEmailFromDB,
+  getSingleUserByIdFromDB,
   updateUserFromDB,
   deleteUserFromDB,
 };

@@ -7,21 +7,10 @@ import { USER_ROLE } from "../user/user.constant";
 import auth from "../../middlewares/auth";
 import { upload } from "../../utils/sendImageToCloudinary";
 import { UserControllers } from "../user/user.controller";
+import { facilityControllers } from "../facility/facility.controller";
 
 const router = Router();
 
-//user signup
-
-// router.post(
-//   "/create-user",
-//   // upload.single("file"),
-//   // (req: Request & { user?: any }, res: Response, next: NextFunction) => {
-//   //   req.body = JSON.parse(req.body.data);
-//   //   next();
-//   // },
-//   validateRequest(UserValidation.userValidationSchema),
-//   UserControllers.createUser
-// );
 router.post(
   "/create-user",
   upload.single("file"),
@@ -39,7 +28,7 @@ router.post(
   auth(USER_ROLE.admin),
   upload.single("file"),
   (req: Request & { user?: any }, res: Response, next: NextFunction) => {
-    req.body = JSON.parse(req.body.data);
+    // req.body = JSON.parse(req.body.data);
     next();
   },
   validateRequest(UserValidation.userValidationSchema),
@@ -59,13 +48,7 @@ router.post(
   authControllers.refreshToken
 );
 
-// router.post(
-//   '/forget-password',
-//   validateRequest(authValidations.forgetPasswordValidationSchema),
-//   AuthControllers.forgetPassword,
-// );
-
 //check time availability
-router.get("/", authControllers.checkAvailability);
+router.get("/", facilityControllers.checkAvailability);
 
 export const AuthRoutes = router;

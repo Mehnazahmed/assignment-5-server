@@ -20,7 +20,11 @@ router.get("/", auth(USER_ROLE.admin), bookingControllers.getAllBookings);
 
 // /router.get("/", bookingControllers.checkAvailability);
 
-router.get("/user", auth(USER_ROLE.user), bookingControllers.getUserBookings);
+router.get(
+  "/:id",
+  // auth(USER_ROLE.user),
+  bookingControllers.getBookingByUserId
+);
 
 //cancel booking
 router.delete(

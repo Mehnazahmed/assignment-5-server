@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
-export type TBookingStatus = "confirmed" | "unconfirmed" | "canceled";
+export type TBookingStatus = "confirmed" | "pending" | "canceled";
+export type TPaymentStatus = "pending" | "paid" | "failed";
 export interface TBooking {
   date: Date;
   startTime: string;
@@ -7,5 +8,7 @@ export interface TBooking {
   user: Types.ObjectId;
   facility: Types.ObjectId;
   payableAmount: number;
+  paymentStatus: TPaymentStatus;
   isBooked: TBookingStatus;
+  transactionId: string;
 }

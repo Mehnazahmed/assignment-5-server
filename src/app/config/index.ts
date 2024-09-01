@@ -19,4 +19,8 @@ export default {
   cloudinary_cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   cloudinary_api_key: process.env.CLOUDINARY_API_KEY,
   cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET,
+  amar_pay_storeId: process.env.STORE_ID,
+  amar_pay_signature_key: process.env.SIGNATUREKEY,
+  amar_pay_Payment_Url: process.env.PAYMENT_URL,
+  amar_pay_Payment_verify_Url: process.env.PAYMENT_VERIFY_URL,
 };

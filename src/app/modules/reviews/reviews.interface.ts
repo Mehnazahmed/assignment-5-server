@@ -1,7 +1,7 @@
 import { ObjectId } from "mongoose";
 
 export type TReview = {
-  facility: ObjectId;
+  userName: string;
   email: string;
   rating: number;
   comment: string;

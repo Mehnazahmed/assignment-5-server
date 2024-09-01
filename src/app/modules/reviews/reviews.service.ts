@@ -53,14 +53,10 @@ const addReview = async (
   session.endSession();
 };
 
-const getAllReviews = async (slug: string): Promise<TReview[]> => {
-  const facility = await Facility.findOne({ slug });
+const getAllReviews = async () => {
+  const reviews = await Review.find({});
 
-  if (!facility) {
-    throw new Error("Facility not found");
-  }
-
-  return await Review.find({ facility: facility?._id });
+  return reviews;
 };
 
 const getReviewBySlug = async (id: string): Promise<TReview | null> => {

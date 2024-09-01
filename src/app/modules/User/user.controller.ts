@@ -53,9 +53,21 @@ const getAllUsers = catchAsync(async (req, res) => {
   });
 });
 
-const getSingleUser = catchAsync(async (req, res) => {
+const getSingleUserByEmail = catchAsync(async (req, res) => {
   const { email } = req.params;
-  const result = await UserServices.getSingleUserFromDB(email);
+  const result = await UserServices.getSingleUserByEmailFromDB(email);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User is retrieved succesfully",
+    data: result,
+  });
+});
+const getSingleUserById = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  console.log(id);
+  const result = await UserServices.getSingleUserByIdFromDB(id);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -95,5 +107,6 @@ export const UserControllers = {
   getAllUsers,
   updateUser,
   deleteUser,
-  getSingleUser,
+  getSingleUserByEmail,
+  getSingleUserById,
 };

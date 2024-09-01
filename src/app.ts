@@ -1,3 +1,4 @@
+import path from "path";
 import { authControllers } from "./app/modules/auth/auth.controller";
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
@@ -12,6 +13,7 @@ const app: Application = express();
 //parsers
 app.use(express.json());
 app.use(cookieParser());
+
 app.use(
   cors({
     origin: ["http://localhost:5173", "http://localhost:5000"],
@@ -21,6 +23,7 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/api", router);
 app.get("/", (req: Request, res: Response) => {

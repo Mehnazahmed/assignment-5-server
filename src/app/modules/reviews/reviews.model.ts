@@ -2,9 +2,8 @@ import { Schema, model } from "mongoose";
 import { TReview } from "./reviews.interface";
 
 const reviewSchema = new Schema<TReview>({
-  facility: {
-    type: Schema.Types.ObjectId,
-    ref: "Facility",
+  userName: {
+    type: String,
     required: true,
   },
   email: {

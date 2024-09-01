@@ -21,7 +21,7 @@ const addReview = catchAsync(
 
 const getAllReviews = async (req: Request, res: Response) => {
   try {
-    const result = await ReviewServices.getAllReviews(req.params.slug);
+    const result = await ReviewServices.getAllReviews();
 
     res.status(200).json({
       success: true,

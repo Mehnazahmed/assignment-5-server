@@ -1,6 +1,7 @@
 import mongoose, { Schema, model, Types, Document } from "mongoose";
 import { TBooking } from "./booking.interface";
 import { calculatePayableAmount } from "./booking.utils";
+import { string } from "zod";
 
 const bookingSchema = new Schema<TBooking>(
   {
@@ -30,10 +31,18 @@ const bookingSchema = new Schema<TBooking>(
       type: Number,
       required: true,
     },
+    paymentStatus: {
+      type: String,
+      enum: ["paid", "pending", "failed"],
+      default: "pending",
+    },
+    transactionId: {
+      type: String,
+    },
     isBooked: {
       type: String,
       required: true,
-      enum: ["confirmed", "unconfirmed", "canceled"],
+      enum: ["confirmed", "pending", "canceled"],
     },
   },
   {
@@ -85,6 +94,7 @@ bookingSchema.pre("save", async function (this: TBooking & Document, next) {
     endTime,
     facility.pricePerHour
   );
+
   next();
 });
 bookingSchema.index({ date: 1, facility: 1, startTime: 1, endTime: 1 });

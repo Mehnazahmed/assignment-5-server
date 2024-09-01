@@ -4,8 +4,10 @@ import { User } from "../modules/user/user.model";
 
 const superUser = {
   email: "mehnaz@gmail.com",
-  name: "super admin",
+  name: "Super Admin",
   phone: "string",
+  profileImg:
+    "https://res.cloudinary.com/dj3m1cb0v/image/upload/v1724655483/superAdmin_xtohhs.png",
 
   address: "default",
   password: config.super_admin_password,

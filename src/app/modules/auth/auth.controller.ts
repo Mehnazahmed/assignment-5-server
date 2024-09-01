@@ -50,49 +50,8 @@ const refreshToken = catchAsync(async (req, res) => {
   });
 });
 
-// const forgetPassword = catchAsync(
-//   async (req: Request & { user?: any }, res) => {
-//     const userId = req.body.id;
-//     const result = await AuthServices.forgetPassword(userId);
-//     sendResponse(res, {
-//       statusCode: httpStatus.OK,
-//       success: true,
-//       message: "Reset link is generated succesfully!",
-//       data: result,
-//     });
-//   }
-// );
-
-//check availability
-
-const checkAvailability = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { date } = req.query;
-    const availableSlots = await authServices.checkAvailabilityFromDB(
-      date as string
-    );
-
-    console.log("Available Slots:", availableSlots); // Debugging line
-
-    // Send the response
-    res.json({
-      success: true,
-      statusCode: httpStatus.OK,
-      message: "Availability checked successfully",
-      data: availableSlots,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const authControllers = {
   loginUser,
-  checkAvailability,
 
   refreshToken,
 };

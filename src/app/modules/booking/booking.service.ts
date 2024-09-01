@@ -1,8 +1,11 @@
+import mongoose from "mongoose";
+import { Facility } from "../facility/facility.model";
+import { initialPayment } from "../payment/payment.utils";
 import { User } from "../user/user.model";
-import { findAvailableSlots, fullDaySlots, Slot } from "./booking.const";
-import { TBookingDocument, TUserDocument } from "./booking.constant";
+
 import { TBooking } from "./booking.interface";
 import { Booking } from "./booking.model";
+import { calculatePayableAmount } from "./booking.utils";
 
 // const createBookingIntoDB = async (payload: TBooking) => {
 //   const result = await Booking.create(payload);
@@ -10,12 +13,43 @@ import { Booking } from "./booking.model";
 //   return result;
 // };
 const createBookingIntoDB = async (payload: TBooking) => {
-  const { date, startTime, endTime, facility } = payload;
+  const {
+    date,
+    startTime,
+    endTime,
+    facility: facilityId,
+    user: userId,
+  } = payload;
+
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new Error("User not found.");
+  }
+  const facility = await Facility.findById(facilityId);
+  if (!facility) {
+    throw new Error("Facility not found.");
+  }
+  const dateString = date.toISOString().split("T")[0];
+  const startTimeFormatted = `${dateString}T${startTime}:00`;
+  const endTimeFormatted = `${dateString}T${endTime}:00`;
+
+  // Construct Date objects
+  const startTimeDate = new Date(startTimeFormatted);
+  const endTimeDate = new Date(endTimeFormatted);
+
+  const pricePerHour = facility.pricePerHour;
+  const payableAmount = calculatePayableAmount(
+    startTimeDate,
+    endTimeDate,
+    pricePerHour
+  );
+
+  const transactionId = `TXN-${Date.now()}`;
 
   // Check for overlapping bookings
   const overlappingBooking = await Booking.findOne({
     date,
-    facility,
+    facilityId,
     $or: [
       { startTime: { $lt: endTime, $gte: startTime } },
       { endTime: { $lte: endTime, $gt: startTime } },
@@ -30,8 +64,21 @@ const createBookingIntoDB = async (payload: TBooking) => {
 
   // If no overlapping booking is found, create the booking
   const result = await Booking.create(payload);
+  const paymentData = {
+    transactionId,
+    amount: payableAmount,
+    customerName: user.name,
+    customerEmail: user.email,
+    customerPhone: user.phone,
+    customerAddress: user.address,
+  };
 
-  return result;
+  const paymentSession = await initialPayment(paymentData);
+
+  console.log(paymentSession);
+  const newresult = paymentSession;
+
+  return newresult;
 };
 
 const getAllBookingsFromDB = async () => {
@@ -50,17 +97,22 @@ const deleteBookingFromDB = async (id: string) => {
   return result;
 };
 
-const getBookingsByUser = async (userEmail: any) => {
-  const user = await User.findOne({ email: userEmail });
-  // console.log(user);
-  if (!user) {
-    throw new Error("User not found");
+const getBookingByUserIdFromDB = async (userId: string) => {
+  try {
+    // Querying directly as a string
+    const booking = await Booking.findOne({ "user._id": userId })
+      .populate("facility")
+      .populate("user");
+
+    if (!booking) {
+      throw new Error("Booking not found");
+    }
+
+    return booking;
+  } catch (error) {
+    console.error("Error fetching booking:", error);
+    throw error;
   }
-  const userId = user._id;
-  const userBookings = await Booking.find({ user: userId }).populate(
-    "facility"
-  );
-  return userBookings;
 };
 
 // const getBookingsByUser = async (userEmail: string) => {
@@ -85,47 +137,10 @@ const getBookingsByUser = async (userEmail: any) => {
 //   }
 // };
 
-// const checkAvailabilityFromDB = async (date: string) => {
-//   const bookingDate = date ? new Date(date) : new Date();
-
-//   const formattedDate = bookingDate.toISOString().split("T")[0];
-
-//   const bookings = await Booking.find({
-//     date: new Date(formattedDate),
-//     isBooked: "confirmed",
-//   });
-
-//   const fullDaySlots = [{ startTime: "08:00:00", endTime: "20:00:00" }];
-
-//   const availableSlots = findAvailableSlots(bookings, fullDaySlots);
-
-//   return availableSlots;
-// };
-
-// Function to check availability
-// const checkAvailabilityFromDB = async (date: string) => {
-//   const bookingDate = date ? new Date(date) : new Date();
-//   const formattedDate = bookingDate.toISOString().split("T")[0];
-
-//   // Fetch bookings for the specified date
-//   const bookings = await Booking.find({
-//     date: new Date(formattedDate),
-//     isBooked: "confirmed",
-//   });
-
-//   // Find available slots
-//   const availableSlots = findAvailableSlots(bookings);
-
-//   console.log("Bookings:", bookings); // Debug: Print fetched bookings
-//   console.log("Available Slots:", availableSlots); // Debug: Print available slots
-
-//   return availableSlots;
-// };
-
 export const bookingServices = {
   createBookingIntoDB,
   getAllBookingsFromDB,
   deleteBookingFromDB,
-  // checkAvailabilityFromDB,
-  getBookingsByUser,
+
+  getBookingByUserIdFromDB,
 };

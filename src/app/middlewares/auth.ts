@@ -32,11 +32,11 @@ const auth = (...requiredRoles: TUserRole[]) => {
       ) as JwtPayload;
 
       const { role, userEmail, userId, iat } = decoded;
-      console.log("decoded", decoded);
+      // console.log("decoded", decoded);
       // checking if the user is exist
       const user = await User.isUserExistsByEmail(userEmail);
 
-      console.log("user", user);
+      // console.log("user", user);
 
       if (!user) {
         throw new AppError(httpStatus.NOT_FOUND, "This user is not found !");
@@ -50,7 +50,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
       }
 
       req.user = decoded as JwtPayload;
-      console.log(req.user);
+      // console.log(req.user);
       next();
     }
   );

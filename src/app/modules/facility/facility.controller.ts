@@ -68,10 +68,52 @@ const getFaicilityById = catchAsync(async (req, res) => {
   });
 });
 
+//check availability
+
+const checkAvailability = catchAsync(async (req, res, next) => {
+  try {
+    const { date, facility } = req.query;
+
+    // Validate input
+    if (!facility) {
+      return res.status(400).json({
+        success: false,
+        statusCode: httpStatus.BAD_REQUEST,
+        message: "Facility ID is required.",
+      });
+    }
+
+    // Call the service function
+    const availabilityData = await facilityServices.checkAvailabilityFromDB(
+      date as string,
+      facility as string
+    );
+
+    // console.log("Availability Data:", availabilityData); // Debugging line
+
+    // Send the response
+    res.json({
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Availability checked successfully",
+      data: availabilityData,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      statusCode: httpStatus.INTERNAL_SERVER_ERROR,
+      message:
+        error.message || "An error occurred while checking availability.",
+    });
+    next(error);
+  }
+});
+
 export const facilityControllers = {
   createFacility,
   updateFacility,
   deleteFacility,
   getAllFacilities,
   getFaicilityById,
+  checkAvailability,
 };

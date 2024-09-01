@@ -7,9 +7,18 @@ import { UserValidation } from "./user.validation";
 
 const router = express.Router();
 
-router.get("/", UserControllers.getAllUsers);
+router.get("/", auth(USER_ROLE.admin), UserControllers.getAllUsers);
 
-router.get("/:email", auth(USER_ROLE.admin), UserControllers.getSingleUser);
+router.get(
+  "/:email",
+  auth(USER_ROLE.admin, USER_ROLE.user),
+  UserControllers.getSingleUserByEmail
+);
+router.get(
+  "/:id",
+  auth(USER_ROLE.admin, USER_ROLE.user),
+  UserControllers.getSingleUserById
+);
 
 router.patch(
   "/:id",
