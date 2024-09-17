@@ -4,13 +4,51 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Payment Confirmation</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f4f4f4;
+      }
+      h1 {
+        color: #4caf50;
+      }
+      p {
+        font-size: 16px;
+        color: #333;
+      }
+      .container {
+        max-width: 600px;
+        margin: auto;
+        margin-top: 40px;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .home-link {
+        display: block;
+        margin-top: 20px;
+        text-align: center;
+        font-size: 16px;
+        color: #007bff;
+        text-decoration: none;
+      }
+      .home-link:hover {
+        text-decoration: underline;
+      }
+    </style>
+    <script>
+      // Redirect to the client-side application after a delay
+      setTimeout(function () {
+        window.location.href = "http://localhost:5173/";
+      }, 5000);
+    </script>
   </head>
-  <body>
+  <body class="container">
     <h1>{{message}}</h1>
-    <p>
-      Lorem ipsum dolor sit, amet consectetur adipisicing elit. Beatae, quia
-      magnam. Voluptate dolorum aut mollitia inventore rerum expedita nesciunt
-      dolores?
-    </p>
+    <p>Thanks For Choosing Us.Have a wonderful day</p>
+    <a href="/" class="home-link">Go back to Home</a>
   </body>
 </html>

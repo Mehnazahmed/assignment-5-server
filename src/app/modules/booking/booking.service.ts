@@ -49,10 +49,11 @@ const createBookingIntoDB = async (payload: TBooking) => {
   // Check for overlapping bookings
   const overlappingBooking = await Booking.findOne({
     date,
-    facilityId,
+    facility: facilityId,
     $or: [
-      { startTime: { $lt: endTime, $gte: startTime } },
-      { endTime: { $lte: endTime, $gt: startTime } },
+      { startTime: { $lt: endTime }, endTime: { $gt: startTime } },
+      // { startTime: { $lt: endTime, $gte: startTime } },
+      // { endTime: { $lte: endTime, $gt: startTime } },
     ],
   });
 
@@ -68,7 +69,7 @@ const createBookingIntoDB = async (payload: TBooking) => {
   };
   // If no overlapping booking is found, create the booking
   const result = await Booking.create(bookingPayload);
-  console.log(result);
+
   const paymentData = {
     transactionId: transactionId,
     amount: payableAmount,
@@ -106,7 +107,10 @@ const deleteBookingFromDB = async (id: string) => {
 const getBookingByUserIdFromDB = async (userId: string) => {
   try {
     // Querying directly as a string
-    const booking = await Booking.findOne({ "user._id": userId })
+    const booking = await Booking.find({
+      "user._id": userId,
+      isBooked: { $ne: "canceled" },
+    })
       .populate("facility")
       .populate("user");
 

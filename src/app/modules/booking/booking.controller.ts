@@ -83,13 +83,13 @@ const getAllBookings = catchAsync(async (req, res) => {
 
 const getBookingByUserId = async (req: Request, res: Response) => {
   const { userId } = req.params;
-  const booking = await bookingServices.getBookingByUserIdFromDB(userId);
+  const bookings = await bookingServices.getBookingByUserIdFromDB(userId);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "Booking retrieved successfully",
-    data: booking,
+    data: bookings,
   });
 };
 
