@@ -1,10 +1,6 @@
 Sports Facility Booking Platform
 Welcome to the Sports Facility Booking Platform. This application allows users to book sports facilities, check availability, and manage their bookings with ease. Admins can manage facilities and view all bookings.
 
-
-
-
-
 Features
 User Authentication: Sign up and log in as a user or admin.
 Facility Management: Admins can create, update, delete, and view facilities.
@@ -65,12 +61,12 @@ Request Body:
 json
 Copy code
 {
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "password123",
-  "phone": "1234567890",
-  "role": "user",
-  "address": "123 Main St"
+"name": "John Doe",
+"email": "john@example.com",
+"password": "password123",
+"phone": "1234567890",
+"role": "user",
+"address": "123 Main St"
 }
 Log In
 
@@ -79,8 +75,8 @@ Request Body:
 json
 Copy code
 {
-  "email": "john@example.com",
-  "password": "password123"
+"email": "john@example.com",
+"password": "password123"
 }
 Facility Routes
 Create Facility (Admin Only)
@@ -90,10 +86,10 @@ Request Body:
 json
 Copy code
 {
-  "name": "Tennis Court",
-  "description": "Outdoor tennis court with synthetic surface.",
-  "pricePerHour": 30,
-  "location": "456 Sports Ave"
+"name": "Tennis Court",
+"description": "Outdoor tennis court with synthetic surface.",
+"pricePerHour": 30,
+"location": "456 Sports Ave"
 }
 Update Facility (Admin Only)
 
@@ -102,10 +98,10 @@ Request Body:
 json
 Copy code
 {
-  "name": "Updated Tennis Court",
-  "description": "Updated outdoor tennis court with synthetic surface.",
-  "pricePerHour": 35,
-  "location": "789 Sports Ave"
+"name": "Updated Tennis Court",
+"description": "Updated outdoor tennis court with synthetic surface.",
+"pricePerHour": 35,
+"location": "789 Sports Ave"
 }
 Delete Facility (Admin Only)
 
@@ -124,10 +120,10 @@ Request Body:
 json
 Copy code
 {
-  "facility": "facility_id",
-  "date": "2024-06-15",
-  "startTime": "10:00",
-  "endTime": "13:00"
+"facility": "facility_id",
+"date": "2024-06-15",
+"startTime": "10:00",
+"endTime": "13:00"
 }
 View All Bookings (Admin Only)
 

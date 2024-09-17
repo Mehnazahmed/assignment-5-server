@@ -3,13 +3,11 @@ import httpStatus from "http-status";
 import sendResponse from "../../utils/sendResponse";
 import { bookingServices } from "./booking.service";
 import { TBooking } from "./booking.interface";
-import { Booking } from "./booking.model";
+
 import AppError from "../../errors/AppError";
 import catchAsync from "../../utils/catchAsync";
 import { User } from "../user/user.model";
 import mongoose from "mongoose";
-import { initialPayment } from "../payment/payment.utils";
-import { Facility } from "../facility/facility.model";
 
 const createBooking = catchAsync(
   async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
@@ -19,7 +17,7 @@ const createBooking = catchAsync(
 
       const userInfo = await User.isUserExistsByEmail(email);
       const userId = userInfo._id;
-      const transactionId = `TXN-${Date.now()}`;
+
       if (!userData) {
         throw new AppError(
           httpStatus.UNAUTHORIZED,
@@ -27,7 +25,7 @@ const createBooking = catchAsync(
         );
       }
 
-      const { facility, date, startTime, endTime } = req.body;
+      const { facility, date, startTime, endTime, transactionId } = req.body;
 
       const bookingData: TBooking = {
         facility,

@@ -11,6 +11,9 @@ const facilitySchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
+    image: {
+        type: String,
+    },
     pricePerHour: {
         type: Number,
         required: true,

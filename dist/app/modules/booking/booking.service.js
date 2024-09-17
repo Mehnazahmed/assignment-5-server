@@ -10,18 +10,38 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.bookingServices = void 0;
+const facility_model_1 = require("../facility/facility.model");
+const payment_utils_1 = require("../payment/payment.utils");
 const user_model_1 = require("../user/user.model");
 const booking_model_1 = require("./booking.model");
+const booking_utils_1 = require("./booking.utils");
 // const createBookingIntoDB = async (payload: TBooking) => {
 //   const result = await Booking.create(payload);
 //   return result;
 // };
 const createBookingIntoDB = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const { date, startTime, endTime, facility } = payload;
+    const { date, startTime, endTime, facility: facilityId, user: userId, } = payload;
+    const user = yield user_model_1.User.findById(userId);
+    if (!user) {
+        throw new Error("User not found.");
+    }
+    const facility = yield facility_model_1.Facility.findById(facilityId);
+    if (!facility) {
+        throw new Error("Facility not found.");
+    }
+    const dateString = date.toISOString().split("T")[0];
+    const startTimeFormatted = `${dateString}T${startTime}:00`;
+    const endTimeFormatted = `${dateString}T${endTime}:00`;
+    // Construct Date objects
+    const startTimeDate = new Date(startTimeFormatted);
+    const endTimeDate = new Date(endTimeFormatted);
+    const pricePerHour = facility.pricePerHour;
+    const payableAmount = (0, booking_utils_1.calculatePayableAmount)(startTimeDate, endTimeDate, pricePerHour);
+    const transactionId = `TXN-${Date.now()}`;
     // Check for overlapping bookings
     const overlappingBooking = yield booking_model_1.Booking.findOne({
         date,
-        facility,
+        facilityId,
         $or: [
             { startTime: { $lt: endTime, $gte: startTime } },
             { endTime: { $lte: endTime, $gt: startTime } },
@@ -32,7 +52,18 @@ const createBookingIntoDB = (payload) => __awaiter(void 0, void 0, void 0, funct
     }
     // If no overlapping booking is found, create the booking
     const result = yield booking_model_1.Booking.create(payload);
-    return result;
+    const paymentData = {
+        transactionId,
+        amount: payableAmount,
+        customerName: user.name,
+        customerEmail: user.email,
+        customerPhone: user.phone,
+        customerAddress: user.address,
+    };
+    const paymentSession = yield (0, payment_utils_1.initialPayment)(paymentData);
+    console.log(paymentSession);
+    const newresult = paymentSession;
+    return newresult;
 });
 const getAllBookingsFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield booking_model_1.Booking.find().populate("user").populate("facility");
@@ -44,15 +75,21 @@ const deleteBookingFromDB = (id) => __awaiter(void 0, void 0, void 0, function* 
     }).populate("facility");
     return result;
 });
-const getBookingsByUser = (userEmail) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield user_model_1.User.findOne({ email: userEmail });
-    // console.log(user);
-    if (!user) {
-        throw new Error("User not found");
+const getBookingByUserIdFromDB = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // Querying directly as a string
+        const booking = yield booking_model_1.Booking.findOne({ "user._id": userId })
+            .populate("facility")
+            .populate("user");
+        if (!booking) {
+            throw new Error("Booking not found");
+        }
+        return booking;
     }
-    const userId = user._id;
-    const userBookings = yield booking_model_1.Booking.find({ user: userId }).populate("facility");
-    return userBookings;
+    catch (error) {
+        console.error("Error fetching booking:", error);
+        throw error;
+    }
 });
 // const getBookingsByUser = async (userEmail: string) => {
 //   try {
@@ -71,36 +108,9 @@ const getBookingsByUser = (userEmail) => __awaiter(void 0, void 0, void 0, funct
 //     throw error;
 //   }
 // };
-// const checkAvailabilityFromDB = async (date: string) => {
-//   const bookingDate = date ? new Date(date) : new Date();
-//   const formattedDate = bookingDate.toISOString().split("T")[0];
-//   const bookings = await Booking.find({
-//     date: new Date(formattedDate),
-//     isBooked: "confirmed",
-//   });
-//   const fullDaySlots = [{ startTime: "08:00:00", endTime: "20:00:00" }];
-//   const availableSlots = findAvailableSlots(bookings, fullDaySlots);
-//   return availableSlots;
-// };
-// Function to check availability
-// const checkAvailabilityFromDB = async (date: string) => {
-//   const bookingDate = date ? new Date(date) : new Date();
-//   const formattedDate = bookingDate.toISOString().split("T")[0];
-//   // Fetch bookings for the specified date
-//   const bookings = await Booking.find({
-//     date: new Date(formattedDate),
-//     isBooked: "confirmed",
-//   });
-//   // Find available slots
-//   const availableSlots = findAvailableSlots(bookings);
-//   console.log("Bookings:", bookings); // Debug: Print fetched bookings
-//   console.log("Available Slots:", availableSlots); // Debug: Print available slots
-//   return availableSlots;
-// };
 exports.bookingServices = {
     createBookingIntoDB,
     getAllBookingsFromDB,
     deleteBookingFromDB,
-    // checkAvailabilityFromDB,
-    getBookingsByUser,
+    getBookingByUserIdFromDB,
 };

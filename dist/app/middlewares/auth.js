@@ -32,11 +32,11 @@ const auth = (...requiredRoles) => {
         }
         // checking if the given token is valid
         const decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwt_access_secret);
-        const { role, userEmail } = decoded;
-        //   console.log("decoded", decoded);
+        const { role, userEmail, userId, iat } = decoded;
+        // console.log("decoded", decoded);
         // checking if the user is exist
         const user = yield user_model_1.User.isUserExistsByEmail(userEmail);
-        //   console.log("user", user);
+        // console.log("user", user);
         if (!user) {
             throw new AppError_1.default(http_status_1.default.NOT_FOUND, "This user is not found !");
         }
@@ -44,7 +44,7 @@ const auth = (...requiredRoles) => {
             throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, "You are not authorized  hi!");
         }
         req.user = decoded;
-        console.log(req.user);
+        // console.log(req.user);
         next();
     }));
 };

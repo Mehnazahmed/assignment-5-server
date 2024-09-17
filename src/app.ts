@@ -16,11 +16,14 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5000"],
+    origin: [
+      "http://localhost:5173",
+      "https://assignment-5-client-three.vercel.app",
+    ],
     credentials: true,
 
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    // methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    // allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 app.use(express.static(path.join(__dirname, "public")));

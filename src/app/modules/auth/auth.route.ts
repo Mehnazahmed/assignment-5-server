@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { authControllers } from "./auth.controller";
 import validateRequest from "../../middlewares/validateRequest";
-import { UserValidation } from "../user/user.validation";
+
 import { authValidations } from "./auth.validation";
 import { USER_ROLE } from "../user/user.constant";
 import auth from "../../middlewares/auth";
@@ -18,7 +18,7 @@ router.post(
     // req.body = JSON.parse(req.body.data);
     next();
   },
-  validateRequest(UserValidation.userValidationSchema),
+  validateRequest(authValidations.userValidationSchema),
   UserControllers.createUser
 );
 
@@ -31,7 +31,7 @@ router.post(
     // req.body = JSON.parse(req.body.data);
     next();
   },
-  validateRequest(UserValidation.userValidationSchema),
+  validateRequest(authValidations.userValidationSchema),
   UserControllers.createAdmin
 );
 

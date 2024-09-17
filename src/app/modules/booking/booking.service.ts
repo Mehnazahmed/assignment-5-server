@@ -62,10 +62,15 @@ const createBookingIntoDB = async (payload: TBooking) => {
     );
   }
 
-  // If no overlapping booking is found, create the booking
-  const result = await Booking.create(payload);
-  const paymentData = {
+  const bookingPayload = {
+    ...payload,
     transactionId,
+  };
+  // If no overlapping booking is found, create the booking
+  const result = await Booking.create(bookingPayload);
+  console.log(result);
+  const paymentData = {
+    transactionId: transactionId,
     amount: payableAmount,
     customerName: user.name,
     customerEmail: user.email,
@@ -79,6 +84,7 @@ const createBookingIntoDB = async (payload: TBooking) => {
   const newresult = paymentSession;
 
   return newresult;
+  // return { result, newresult };
 };
 
 const getAllBookingsFromDB = async () => {

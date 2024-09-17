@@ -20,6 +20,7 @@ const confirmationService = async (transactionId: string, status: string) => {
         new: true,
       }
     );
+
     message = "Successfully paid";
   } else {
     message = "Payment Failed!";

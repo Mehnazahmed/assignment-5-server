@@ -12,12 +12,14 @@ const facilityValidationSchema = zod_1.z.object({
             required_error: "Facility description is required",
             invalid_type_error: "Facility description must be a string",
         }),
-        pricePerHour: zod_1.z
+        pricePerHour: zod_1.z.preprocess((value) => {
+            return Number(value);
+        }, zod_1.z
             .number({
             required_error: "Price per hour is required",
             invalid_type_error: "Price per hour must be a number",
         })
-            .positive({ message: "Price per hour must be a positive value" }),
+            .positive({ message: "Price per hour must be a positive value" })),
         location: zod_1.z.string({
             required_error: "Facility location is required",
             invalid_type_error: "Facility location must be a string",

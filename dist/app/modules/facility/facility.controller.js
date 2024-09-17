@@ -18,7 +18,9 @@ const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const facility_service_1 = require("./facility.service");
 const createFacility = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield facility_service_1.facilityServices.createFacilityIntoDB(req.body);
+    const facilityData = req.body;
+    const file = req.file;
+    const result = yield facility_service_1.facilityServices.createFacilityIntoDB(file, facilityData);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
@@ -55,9 +57,53 @@ const getAllFacilities = (0, catchAsync_1.default)((req, res) => __awaiter(void 
         data: result,
     });
 }));
+const getFaicilityById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const facility = yield facility_service_1.facilityServices.getFacilityByIdFromDB(id);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "Facilty retrieved successfully",
+        data: facility,
+    });
+}));
+//check availability
+const checkAvailability = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { date, facility } = req.query;
+        // Validate input
+        if (!facility) {
+            return res.status(400).json({
+                success: false,
+                statusCode: http_status_1.default.BAD_REQUEST,
+                message: "Facility ID is required.",
+            });
+        }
+        // Call the service function
+        const availabilityData = yield facility_service_1.facilityServices.checkAvailabilityFromDB(date, facility);
+        // console.log("Availability Data:", availabilityData); // Debugging line
+        // Send the response
+        res.json({
+            success: true,
+            statusCode: http_status_1.default.OK,
+            message: "Availability checked successfully",
+            data: availabilityData,
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            success: false,
+            statusCode: http_status_1.default.INTERNAL_SERVER_ERROR,
+            message: error.message || "An error occurred while checking availability.",
+        });
+        next(error);
+    }
+}));
 exports.facilityControllers = {
     createFacility,
     updateFacility,
     deleteFacility,
     getAllFacilities,
+    getFaicilityById,
+    checkAvailability,
 };

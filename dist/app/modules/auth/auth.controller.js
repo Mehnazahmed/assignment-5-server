@@ -17,49 +17,45 @@ const http_status_1 = __importDefault(require("http-status"));
 const catchAsync_1 = __importDefault(require("../../utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../utils/sendResponse"));
 const auth_service_1 = require("./auth.service");
-const usersignUp = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const userData = req.body;
-    const result = yield auth_service_1.authServices.userSignUpIntoDb(userData);
-    (0, sendResponse_1.default)(res, {
-        statusCode: http_status_1.default.OK,
-        success: true,
-        message: "User registered successfully",
-        data: result,
-    });
-}));
+const config_1 = __importDefault(require("../../config"));
+// const usersignUp = catchAsync(async (req, res) => {
+//   const userData = req.body;
+//   const result = await authServices.userSignUpIntoDb(userData);
+//   sendResponse(res, {
+//     statusCode: httpStatus.OK,
+//     success: true,
+//     message: "User registered successfully",
+//     data: result,
+//   });
+// });
 const loginUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield auth_service_1.authServices.loginUser(req.body);
-    // res.cookie('refreshToken', refreshToken, {
-    //   secure: config.NODE_ENV === 'production',
-    //   httpOnly: true,
-    // });
+    const { refreshToken, accessToken } = result;
+    res.cookie("refreshToken", refreshToken, {
+        secure: config_1.default.NODE_ENV === "production",
+        httpOnly: true,
+        sameSite: "none",
+        maxAge: 1000 * 60 * 60 * 24 * 365,
+    });
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
         message: "User is logged in succesfully!",
-        token: result.accessToken,
+        token: accessToken,
         data: result.data,
     });
 }));
-const checkAvailability = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { date } = req.query;
-        const availableSlots = yield auth_service_1.authServices.checkAvailabilityFromDB(date);
-        console.log("Available Slots:", availableSlots); // Debugging line
-        // Send the response
-        res.json({
-            success: true,
-            statusCode: http_status_1.default.OK,
-            message: "Availability checked successfully",
-            data: availableSlots,
-        });
-    }
-    catch (error) {
-        next(error);
-    }
-});
+const refreshToken = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { refreshToken } = req.cookies;
+    const result = yield auth_service_1.authServices.refreshToken(refreshToken);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: "Access token is retrieved succesfully!",
+        data: result,
+    });
+}));
 exports.authControllers = {
-    usersignUp,
     loginUser,
-    checkAvailability,
+    refreshToken,
 };

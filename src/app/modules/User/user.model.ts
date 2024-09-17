@@ -11,6 +11,7 @@ const userSchema = new Schema<TUser, UserModel>(
       required: [true, "Name is required"],
     },
     profileImg: { type: String, default: "" },
+
     email: {
       type: String,
       required: [true, "Email is required"],

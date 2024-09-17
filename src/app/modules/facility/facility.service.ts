@@ -5,7 +5,6 @@ import { TFacility } from "./facility.interface";
 import { Facility } from "./facility.model";
 import { Booking } from "../booking/booking.model";
 import { getAvailableSlots } from "./facility.const";
-import { initialPayment } from "../payment/payment.utils";
 
 const createFacilityIntoDB = async (file: any, payload: TFacility) => {
   if (file) {

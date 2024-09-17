@@ -16,7 +16,9 @@ router.post("/", (0, auth_1.default)(user_constant_1.USER_ROLE.user), (0, valida
 //get all bookngs
 router.get("/", (0, auth_1.default)(user_constant_1.USER_ROLE.admin), booking_controller_1.bookingControllers.getAllBookings);
 // /router.get("/", bookingControllers.checkAvailability);
-router.get("/user", (0, auth_1.default)(user_constant_1.USER_ROLE.user), booking_controller_1.bookingControllers.getUserBookings);
+router.get("/:id", 
+// auth(USER_ROLE.user),
+booking_controller_1.bookingControllers.getBookingByUserId);
 //cancel booking
 router.delete("/:id", (0, auth_1.default)(user_constant_1.USER_ROLE.user), booking_controller_1.bookingControllers.deleteBooking);
 exports.BookingRoutes = router;

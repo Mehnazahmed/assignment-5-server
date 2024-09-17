@@ -22,6 +22,7 @@ const userSchema = new mongoose_1.Schema({
         type: String,
         required: [true, "Name is required"],
     },
+    profileImg: { type: String, default: "" },
     email: {
         type: String,
         required: [true, "Email is required"],
@@ -38,12 +39,15 @@ const userSchema = new mongoose_1.Schema({
     },
     role: {
         type: String,
-        enum: ["admin", "user"],
+        enum: ["admin", "user", "superAdmin"],
         required: [true, "Role is required"],
     },
     address: {
         type: String,
         required: [true, "Address is required"],
+    },
+    isDeleted: {
+        type: Boolean,
     },
 }, {
     toJSON: {
@@ -70,6 +74,11 @@ userSchema.post("save", function (doc, next) {
     doc.password = "";
     next();
 });
+userSchema.statics.isUserExistsByCustomId = function (id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield exports.User.findOne({ id }).select("+password");
+    });
+};
 userSchema.statics.isUserExistsByEmail = function (email) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield exports.User.findOne({ email }).select("+password");
