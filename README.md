@@ -152,3 +152,7 @@ The backend server will be running at http://localhost:5000.
 
 email: admin@gmail.com
 password: admin123
+
+```
+
+```

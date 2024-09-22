@@ -58,6 +58,8 @@ const deleteFacilityFromDB = async (id: string) => {
   return result;
 };
 
+//check availability
+
 const checkAvailabilityFromDB = async (
   date: string | undefined,
   facilityId: string
