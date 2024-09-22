@@ -2,7 +2,6 @@ import { Booking } from "../booking/booking.model";
 import { verifyPayment } from "./payment.utils";
 import { join } from "path";
 import { readFileSync } from "fs";
-import { Types } from "mongoose";
 
 interface BookingDetails {
   facility: string;
