@@ -18,7 +18,7 @@ const AppError_1 = __importDefault(require("../../errors/AppError"));
 const sendImageToCloudinary_1 = require("../../utils/sendImageToCloudinary");
 const facility_model_1 = require("./facility.model");
 const booking_model_1 = require("../booking/booking.model");
-const facility_const_1 = require("./facility.const");
+const moment_1 = __importDefault(require("moment"));
 const createFacilityIntoDB = (file, payload) => __awaiter(void 0, void 0, void 0, function* () {
     if (file) {
         const imageName = `${payload === null || payload === void 0 ? void 0 : payload.name}`;
@@ -55,36 +55,74 @@ const deleteFacilityFromDB = (id) => __awaiter(void 0, void 0, void 0, function*
     });
     return result;
 });
-const checkAvailabilityFromDB = (date_1, facilityId_1, ...args_1) => __awaiter(void 0, [date_1, facilityId_1, ...args_1], void 0, function* (date, facilityId, startHour = 9, endHour = 21) {
-    if (!facilityId) {
-        throw new Error("Facility ID is required.");
-    }
-    // console.log("Facility ID in query:", facilityId);
-    // console.log("Query date:", new Date(date).toISOString());
-    const bookingDate = date ? new Date(date) : new Date();
-    const formattedDate = bookingDate.toISOString().split("T")[0];
-    const queryDate = new Date(date).toISOString();
-    const bookings = yield booking_model_1.Booking.find({
-        facility: facilityId,
-        date: queryDate,
-        isBooked: "confirmed",
-    });
-    // Fetch bookings for the specified date
-    // const bookings = await Booking.find({
-    //   date: {
-    //     $gte: new Date(`${formattedDate}T00:00:00.000Z`),
-    //     $lt: new Date(`${formattedDate}T23:59:59.999Z`),
-    //   },
-    //   facility: facilityId,
-    //   isBooked: "confirmed",
-    // });
-    // Find available slots
-    const availableSlots = (0, facility_const_1.getAvailableSlots)(bookings, startHour, endHour);
-    return {
-        availableSlots: availableSlots.length > 0
-            ? availableSlots
-            : "No slots available for the selected date and facility.",
+// const checkAvailabilityFromDB = async (
+//   date: string,
+//   facilityId: string,
+//   startHour: number = 9,
+//   endHour: number = 21
+// ): Promise<any> => {
+//   if (!facilityId) {
+//     throw new Error("Facility ID is required.");
+//   }
+//   // console.log("Facility ID in query:", facilityId);
+//   // console.log("Query date:", new Date(date).toISOString());
+//   const bookingDate = date ? new Date(date) : new Date();
+//   const formattedDate = bookingDate.toISOString().split("T")[0];
+//   const queryDate = new Date(date).toISOString();
+//   const bookings = await Booking.find({
+//     facility: facilityId,
+//     date: queryDate,
+//     isBooked: "confirmed",
+//   });
+//   // Fetch bookings for the specified date
+//   // const bookings = await Booking.find({
+//   //   date: {
+//   //     $gte: new Date(`${formattedDate}T00:00:00.000Z`),
+//   //     $lt: new Date(`${formattedDate}T23:59:59.999Z`),
+//   //   },
+//   //   facility: facilityId,
+//   //   isBooked: "confirmed",
+//   // });
+//   // Find available slots
+//   const availableSlots = getAvailableSlots(bookings, startHour, endHour);
+//   return {
+//     availableSlots:
+//       availableSlots.length > 0
+//         ? availableSlots
+//         : "No slots available for the selected date and facility.",
+//   };
+// };
+// Service to check availability based on date and facilityId
+const checkAvailabilityFromDB = (date, facilityId) => __awaiter(void 0, void 0, void 0, function* () {
+    const allSlots = [
+        { startTime: "08:00", endTime: "10:00" },
+        { startTime: "10:00", endTime: "12:00" },
+        { startTime: "12:00", endTime: "14:00" },
+        { startTime: "14:00", endTime: "16:00" },
+        { startTime: "16:00", endTime: "18:00" },
+    ];
+    // Helper function to check if two time slots overlap
+    const isSlotOverlapping = (bookedSlot, availableSlot) => {
+        return (bookedSlot.startTime < availableSlot.endTime &&
+            bookedSlot.endTime > availableSlot.startTime);
     };
+    try {
+        // If no date provided, use today's date
+        const searchDate = date || (0, moment_1.default)().format("YYYY-MM-DD");
+        // Fetch bookings for the specific facility and date
+        const bookings = yield booking_model_1.Booking.find({
+            facility: facilityId,
+            date: searchDate,
+        });
+        // Filter available slots by excluding those that overlap with bookings
+        const availableSlots = allSlots.filter((slot) => {
+            return !bookings.some((booking) => isSlotOverlapping(booking, slot));
+        });
+        return availableSlots;
+    }
+    catch (error) {
+        throw new Error("Error checking availability");
+    }
 });
 exports.facilityServices = {
     createFacilityIntoDB,

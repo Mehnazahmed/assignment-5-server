@@ -1,136 +1,154 @@
-Sports Facility Booking Platform
-Welcome to the Sports Facility Booking Platform. This application allows users to book sports facilities, check availability, and manage their bookings with ease. Admins can manage facilities and view all bookings.
+# Sports Facility Booking Platform - Backend
 
-Features
-User Authentication: Sign up and log in as a user or admin.
-Facility Management: Admins can create, update, delete, and view facilities.
-Booking Management: Users can check availability, create, view, and cancel bookings.
-Role-Based Access Control: Secure routes for users and admins.
-Error Handling: Comprehensive error handling for robust application performance.
-Validation: Input validation using Zod to ensure data consistency.
-Technologies Used
-Backend: Node.js, Express.js
-Database: MongoDB, Mongoose
-Authentication: JWT, bcryptjs
-Validation: Zod
-Environment Management: dotenv
-Setup and Installation
-Prerequisites
-Node.js and npm installed
-MongoDB installed and running
-Installation
-Clone the Repository
+This project is a full-stack sports facility booking application. It allows users to book sports facilities, check availability, and manage their bookings. Admins have the ability to manage facilities, view bookings, and handle user management. The application is divided into backend and frontend repositories.
 
-bash
-Copy code
-git clone https://github.com/Mehnazahmed/Assignment-3
-cd sports-facility-booking
-Install Dependencies
+# Features
 
-bash
-Copy code
+## User Features:
+
+-**Sign Up / Log In**: Users can register and log in to the platform.
+
+-**Book Facilities**: Users can view available facilities, check availability, and create bookings.
+
+-**Manage Bookings**: Users can view and cancel their bookings.
+
+# Admin Features:
+
+-**Facility Management**: Admins can create, update, delete, and view facilities. -**Booking Management**: Admins can view all bookings.
+
+# General Features:
+
+-**Role-Based Access Control**: Secure routes for users and admins. -**Error Handling**: Comprehensive error handling ensures a robust application. -**Validation**: Zod validation ensures input data consistency.
+
+## Technologies Used
+
+### Core Libraries:
+
+### Backend:
+
+-**Node.js and Express.js** for building the server-side application. -**MongoDB and Mongoose** for database management. -**JWT and bcryptjs** for authentication and authorization. -**Zod** for schema validation.
+
+### Frontend:
+
+-**React** for the user interface. -**Redux** for state management. -**TypeScript** for scalability and type safety. -**Ant Design** for UI components. -**Tailwind CSS** for styling. -**Sonner** for toast notifications.
+
+### Additional Technologies:
+
+- **Toast Notifications**: Notifications are managed using the `sonner` library for displaying messages and alerts to users.
+
+### DevOps:
+
+- **pnpm**: An efficient package manager (optional).
+- **npm**: The default package manager.
+
+## Getting Started
+
+### Backend Setup and Installation
+
+## Prerequisites
+
+-**Install Node.js and npm.**
+-Ensure MongoDB is installed and running.
+-Installation
+-Clone the Backend Repository:
+-Clone the repository to your local machine:
+
+```bash
+git clone https://github.com/Mehnazahmed/assignment-5-server.git
+cd assignment-5-server
+
+
+
+
+```
+
+```bash
+Install all required dependencies using npm or pnpm:
+
 npm install
-Configure Environment Variables
-Create a .env file in the root directory and add the following variables:
 
-env
-Copy code
-PORT=5000
-MONGO_URI=your_mongodb_uri
-JWT_SECRET=your_jwt_secret
-Run the Application
+```
+
+```bash
+Running the Development Server
+To start the development server, use the following command:
 
 bash
 Copy code
 npm run dev
-Access the Application
-The application will be running at http://localhost:5000
 
-Environment Variables
-The application uses the following environment variables:
+```
 
-PORT: The port number on which the server runs (default: 5000).
-MONGO_URI: The MongoDB connection string.
-JWT_SECRET: The secret key for JWT authentication.
-API Endpoints
-Auth Routes
-Sign Up
+```bash
+Building for Production
+To create a production build of the project, run:
 
-POST /api/auth/signup
-Request Body:
-json
+bash
 Copy code
-{
-"name": "John Doe",
-"email": "john@example.com",
-"password": "password123",
-"phone": "1234567890",
-"role": "user",
-"address": "123 Main St"
-}
-Log In
+npm run build
 
-POST /api/auth/login
-Request Body:
-json
+```
+
+````
+
+
+```bash
+Configure Environment Variables:
+Make sure to configure the necessary environment variables in a .env file at the root of the project. Example:
+
+bash
 Copy code
-{
-"email": "john@example.com",
-"password": "password123"
-}
-Facility Routes
-Create Facility (Admin Only)
+NEXT_PUBLIC_API_URL=http://your-api-url.com
+NEXT_PUBLIC_STRIPE_KEY=your-stripe-public-key
+NEXTAUTH_SECRET=your-auth-secret
+NODE_ENV= development
+PORT=5000
+DATABASE_URL=mongodb+srv://"":""@cluster0.sn1j5xu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
 
-POST /api/facility
-Request Body:
-json
-Copy code
-{
-"name": "Tennis Court",
-"description": "Outdoor tennis court with synthetic surface.",
-"pricePerHour": 30,
-"location": "456 Sports Ave"
-}
-Update Facility (Admin Only)
 
-PUT /api/facility/:id
-Request Body:
-json
-Copy code
-{
-"name": "Updated Tennis Court",
-"description": "Updated outdoor tennis court with synthetic surface.",
-"pricePerHour": 35,
-"location": "789 Sports Ave"
-}
-Delete Facility (Admin Only)
+JWT_ACCESS_SECRET=
+JWT_ACCESS_EXPIRES_IN=2d
+JWT_REFRESH_SECRET=
 
-DELETE /api/facility/:id
-Get All Facilities
+JWT_REFRESH_EXPIRES_IN=3d
+SUPER_ADMIN_PASSWORD=
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
 
-GET /api/facility
-Booking Routes
-Check Availability
+STORE_ID=
+SIGNATUREKEY=
+PAYMENT_URL=
+PAYMENT_VERIFY_URL=
+````
 
-GET /api/check-availability?date=YYYY-MM-DD
-Create Booking (User Only)
+```bash
+npm run dev
+```
 
-POST /api/bookings
-Request Body:
-json
-Copy code
-{
-"facility": "facility_id",
-"date": "2024-06-15",
-"startTime": "10:00",
-"endTime": "13:00"
-}
-View All Bookings (Admin Only)
+The backend server will be running at http://localhost:5000.
 
-GET /api/bookings
-View User Bookings (User Only)
+## Backend API Endpoints
 
-GET /api/bookings/user
-Cancel Booking (User Only)
+## Authentication:
 
-DELETE /api/bookings/:id
+**POST /api/auth/signup – Register a new user.**
+**POST /api/auth/login – Log in to the platform.**
+**Facility Management (Admin Only):**
+
+**POST /api/facility – Create a new facility.**
+**PUT /api/facility/:id – Update an existing facility.**
+**DELETE /api/facility/:id – Delete a facility.**
+**GET /api/facility – Get all available facilities.**
+
+## Booking:
+
+**GET /api/check-availability?date=YYYY-MM-DD – Check facility availability.**
+**POST /api/bookings – Create a new booking.**
+**GET /api/bookings/user – View user bookings.**
+**DELETE /api/bookings/:id – Cancel a booking.**
+
+## seeded Admin
+
+email: admin@gmail.com
+password: admin123

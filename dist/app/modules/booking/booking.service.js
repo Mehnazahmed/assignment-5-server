@@ -41,19 +41,21 @@ const createBookingIntoDB = (payload) => __awaiter(void 0, void 0, void 0, funct
     // Check for overlapping bookings
     const overlappingBooking = yield booking_model_1.Booking.findOne({
         date,
-        facilityId,
+        facility: facilityId,
         $or: [
-            { startTime: { $lt: endTime, $gte: startTime } },
-            { endTime: { $lte: endTime, $gt: startTime } },
+            { startTime: { $lt: endTime }, endTime: { $gt: startTime } },
+            // { startTime: { $lt: endTime, $gte: startTime } },
+            // { endTime: { $lte: endTime, $gt: startTime } },
         ],
     });
     if (overlappingBooking) {
         throw new Error("The facility is unavailable during the requested time slot.");
     }
+    const bookingPayload = Object.assign(Object.assign({}, payload), { transactionId });
     // If no overlapping booking is found, create the booking
-    const result = yield booking_model_1.Booking.create(payload);
+    const result = yield booking_model_1.Booking.create(bookingPayload);
     const paymentData = {
-        transactionId,
+        transactionId: transactionId,
         amount: payableAmount,
         customerName: user.name,
         customerEmail: user.email,
@@ -64,6 +66,7 @@ const createBookingIntoDB = (payload) => __awaiter(void 0, void 0, void 0, funct
     console.log(paymentSession);
     const newresult = paymentSession;
     return newresult;
+    // return { result, newresult };
 });
 const getAllBookingsFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield booking_model_1.Booking.find().populate("user").populate("facility");
@@ -78,7 +81,10 @@ const deleteBookingFromDB = (id) => __awaiter(void 0, void 0, void 0, function* 
 const getBookingByUserIdFromDB = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Querying directly as a string
-        const booking = yield booking_model_1.Booking.findOne({ "user._id": userId })
+        const booking = yield booking_model_1.Booking.find({
+            "user._id": userId,
+            isBooked: { $ne: "canceled" },
+        })
             .populate("facility")
             .populate("user");
         if (!booking) {

@@ -26,11 +26,10 @@ const createBooking = (0, catchAsync_1.default)((req, res, next) => __awaiter(vo
         const email = userData.userEmail;
         const userInfo = yield user_model_1.User.isUserExistsByEmail(email);
         const userId = userInfo._id;
-        const transactionId = `TXN-${Date.now()}`;
         if (!userData) {
             throw new AppError_1.default(http_status_1.default.UNAUTHORIZED, "User authentication failed");
         }
-        const { facility, date, startTime, endTime } = req.body;
+        const { facility, date, startTime, endTime, transactionId } = req.body;
         const bookingData = {
             facility,
             date: new Date(date),
@@ -82,12 +81,12 @@ const getAllBookings = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
 }));
 const getBookingByUserId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userId } = req.params;
-    const booking = yield booking_service_1.bookingServices.getBookingByUserIdFromDB(userId);
+    const bookings = yield booking_service_1.bookingServices.getBookingByUserIdFromDB(userId);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
         message: "Booking retrieved successfully",
-        data: booking,
+        data: bookings,
     });
 });
 const deleteBooking = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {

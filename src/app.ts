@@ -1,5 +1,5 @@
 import path from "path";
-import { authControllers } from "./app/modules/auth/auth.controller";
+
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import globalErrorHandler from "./app/middlewares/globalErrorHandler";

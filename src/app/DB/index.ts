@@ -3,7 +3,7 @@ import { USER_ROLE } from "../modules/user/user.constant";
 import { User } from "../modules/user/user.model";
 
 const superUser = {
-  email: "mehnaz@gmail.com",
+  email: "admin@gmail.com",
   name: "Super Admin",
   phone: "string",
   profileImg:
