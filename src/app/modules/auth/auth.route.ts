@@ -11,29 +11,6 @@ import { facilityControllers } from "../facility/facility.controller";
 
 const router = Router();
 
-router.post(
-  "/create-user",
-  upload.single("file"),
-  (req: Request & { user?: any }, res: Response, next: NextFunction) => {
-    // req.body = JSON.parse(req.body.data);
-    next();
-  },
-  validateRequest(authValidations.userValidationSchema),
-  UserControllers.createUser
-);
-
-//create admin
-router.post(
-  "/create-admin",
-  auth(USER_ROLE.admin),
-  upload.single("file"),
-  (req: Request & { user?: any }, res: Response, next: NextFunction) => {
-    // req.body = JSON.parse(req.body.data);
-    next();
-  },
-  validateRequest(authValidations.userValidationSchema),
-  UserControllers.createAdmin
-);
 
 //user login
 router.post(
