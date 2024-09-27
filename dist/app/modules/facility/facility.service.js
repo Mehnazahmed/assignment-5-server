@@ -22,9 +22,9 @@ const moment_1 = __importDefault(require("moment"));
 const createFacilityIntoDB = (file, payload) => __awaiter(void 0, void 0, void 0, function* () {
     if (file) {
         const imageName = `${payload === null || payload === void 0 ? void 0 : payload.name}`;
-        const path = file === null || file === void 0 ? void 0 : file.path;
+        // const path = file?.path;
         //send image to cloudinary
-        const { secure_url } = yield (0, sendImageToCloudinary_1.sendImageToCloudinary)(imageName, path);
+        const { secure_url } = yield (0, sendImageToCloudinary_1.sendImageToCloudinary)(imageName, file.buffer);
         payload.image = secure_url;
     }
     const result = yield facility_model_1.Facility.create([payload]);

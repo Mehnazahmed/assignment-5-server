@@ -23,7 +23,7 @@ app.use(
     credentials: true,
 
     // methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    // allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 app.use(express.static(path.join(__dirname, "public")));
