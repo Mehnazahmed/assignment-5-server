@@ -10,10 +10,10 @@ import moment from "moment";
 const createFacilityIntoDB = async (file: any, payload: TFacility) => {
   if (file) {
     const imageName = `${payload?.name}`;
-    const path = file?.path;
+    // const path = file?.path;
 
     //send image to cloudinary
-    const { secure_url } = await sendImageToCloudinary(imageName, path);
+    const { secure_url } = await sendImageToCloudinary(imageName, file.buffer);
     payload.image = secure_url as string;
   }
 

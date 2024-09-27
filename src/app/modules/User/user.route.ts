@@ -4,7 +4,7 @@ import validateRequest from "../../middlewares/validateRequest";
 import { USER_ROLE } from "./user.constant";
 import { UserControllers } from "./user.controller";
 import { UserValidation } from "./user.validation";
-import { authValidations } from "../auth/auth.validation";
+
 import { upload } from "../../utils/sendImageToCloudinary";
 
 const router = express.Router();

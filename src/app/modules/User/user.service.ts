@@ -60,10 +60,10 @@ const createAdminIntoDB = async (file: any, payload: TUser) => {
 
   if (file) {
     const imageName = `${payload?.name}`;
-    const path = file?.path;
+    // const path = file?.path;
 
     //send image to cloudinary
-    const { secure_url } = await sendImageToCloudinary(imageName, path);
+    const { secure_url } = await sendImageToCloudinary(imageName, file.buffer);
     payload.profileImg = secure_url as string;
   }
   const newAdmin = await User.create([payload]);
